@@ -1,0 +1,737 @@
+/* v1.2.5: final theme and responsive rules, appended to app.css by build.mjs. */
+.marketing-preview.hero-split {
+  --split-bg: #ffffff;
+  --split-text: #182c26;
+  --split-muted: #496458;
+  --split-accent: #11674f;
+  --split-soft: #e9f5ef;
+  --split-border: #c5d9ce;
+  background: var(--split-bg);
+  color: var(--split-text);
+  border-color: var(--split-border);
+  transform: none;
+  min-width: 0;
+  max-width: 100%;
+  margin: 0;
+}
+[data-theme="dark"] .marketing-preview.hero-split {
+  --split-bg: #1c2e27;
+  --split-text: #edf7f1;
+  --split-muted: #bed6c9;
+  --split-accent: #9be0c2;
+  --split-soft: #274b3c;
+  --split-border: #4d7060;
+}
+.hero-split h2,
+.hero-split .try-result,
+.hero-split .preview-line {
+  color: var(--split-text);
+}
+.hero-split h2 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  letter-spacing: -0.6px;
+}
+.hero-split p,
+.hero-split .caption,
+.hero-split .try-result small {
+  color: var(--split-muted);
+}
+.hero-split .field > span,
+.hero-split .preview-label {
+  color: var(--split-accent);
+}
+.hero-split .preview-label {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  line-height: 1.7;
+}
+.hero-split .preview-label span {
+  color: var(--split-accent);
+  background: var(--split-soft);
+}
+.hero-split .field input:not([type="range"]) {
+  background: var(--split-bg);
+  color: var(--split-text);
+  border: 1px solid var(--split-border);
+  font-size: clamp(1.3rem, 4vw, 1.6rem);
+  min-width: 0;
+}
+.hero-split .field input[type="range"] {
+  accent-color: var(--split-accent);
+  min-height: 40px;
+  max-width: 100%;
+}
+.hero-split .try-result {
+  font-size: clamp(2rem, 6vw, 3rem);
+  overflow-wrap: anywhere;
+}
+.hero-split .preview-line {
+  border-color: var(--split-border);
+}
+.hero-split .btn {
+  background: #11674f;
+  color: #ffffff;
+  border-color: #11674f;
+  white-space: normal;
+}
+[data-theme="dark"] .hero-split .btn {
+  background: #147d64;
+  color: #ffffff;
+  border-color: #147d64;
+}
+.marketing-nav {
+  flex-wrap: wrap;
+  min-width: 0;
+  gap: 16px;
+  padding-inline: clamp(16px, 3vw, 32px);
+}
+.marketing-nav .wordmark {
+  min-width: 0;
+  flex-shrink: 0;
+}
+.marketing-menu {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: flex-end;
+  gap: clamp(16px, 3vw, 32px);
+  min-width: 0;
+}
+.marketing-menu nav {
+  flex-wrap: wrap;
+  gap: 18px;
+}
+.marketing-menu .account-actions {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.marketing-menu-toggle,
+.member-menu-toggle {
+  display: none;
+}
+.marketing-hero {
+  min-width: 0;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+}
+.marketing-hero > div {
+  min-width: 0;
+}
+.marketing-hero h1 {
+  overflow-wrap: break-word;
+}
+.topbar {
+  height: auto;
+  min-height: 87px;
+  gap: 16px;
+  flex-wrap: wrap;
+  padding-block: 14px;
+  min-width: 0;
+}
+.topbar .space-picker {
+  min-width: 0;
+  max-width: 100%;
+  flex: 1 1 180px;
+}
+.topbar .space-picker > span:nth-child(2) {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.topbar .tools {
+  min-width: 0;
+  max-width: 100%;
+  flex: 0 1 auto;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+.topbar .account-actions {
+  flex-wrap: wrap;
+}
+.topbar .profile-trigger {
+  max-width: 100%;
+}
+.topbar .profile-trigger > span:nth-child(2) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+.operator-shell .operator-topbar {
+  height: auto;
+  min-height: 72px;
+  flex-wrap: wrap;
+}
+.install-guide {
+  min-width: 0;
+}
+.install-guide .install-summary {
+  padding: 16px;
+  background: var(--mint);
+  border-radius: 12px;
+}
+.install-guide .install-summary strong {
+  display: block;
+  margin-bottom: 5px;
+}
+.install-guide .install-summary p {
+  margin: 0;
+  color: var(--text);
+}
+.install-guide .install-steps {
+  padding-left: 22px;
+}
+.install-guide .install-steps li {
+  margin: 12px 0;
+  padding-left: 5px;
+}
+.install-guide .install-link-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.install-guide .install-link-actions .btn {
+  flex: 1;
+  min-width: 130px;
+}
+.install-guide input {
+  min-width: 0;
+  max-width: 100%;
+}
+.install-guide [role="status"] {
+  line-height: 1.6;
+}
+@media (max-width: 1100px) {
+  .marketing-nav {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  .marketing-menu-toggle {
+    display: inline-flex;
+    gap: 10px;
+    min-height: 44px;
+  }
+  .marketing-menu {
+    grid-column: 1/-1;
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    padding: 16px 0 4px;
+    border-top: 1px solid var(--line);
+  }
+  .marketing-menu[data-open="true"] {
+    display: flex;
+  }
+  .marketing-nav .marketing-menu nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .marketing-menu nav a {
+    padding: 12px 8px;
+    min-height: 44px;
+    font-size: 14px;
+  }
+  .marketing-nav .marketing-menu .account-actions {
+    justify-content: flex-start;
+  }
+  .marketing-menu .account-actions .btn {
+    min-height: 44px;
+    font-size: 12px;
+    white-space: normal;
+  }
+}
+@media (max-width: 900px) {
+  .marketing-hero {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+  }
+  .marketing-preview.hero-split {
+    width: 100%;
+    max-width: 600px;
+    justify-self: center;
+  }
+}
+@media (max-width: 760px) {
+  .shell .topbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    min-height: 0;
+    padding: 14px 16px;
+    height: auto;
+    gap: 12px;
+    position: static;
+  }
+  .topbar .mobile-brand {
+    display: block;
+    min-width: 0;
+  }
+  .topbar .mobile-brand .brand {
+    font-size: 20px;
+    white-space: normal;
+  }
+  .topbar .mobile-brand .brand-symbol {
+    width: 34px;
+    height: 34px;
+    flex-shrink: 0;
+  }
+  .topbar .space-picker {
+    display: none;
+  }
+  .topbar .member-menu-toggle {
+    display: inline-flex;
+    min-height: 44px;
+  }
+  .topbar .tools {
+    display: none;
+    grid-column: 1/-1;
+    justify-content: flex-start;
+    gap: 8px !important;
+    padding-top: 12px;
+    border-top: 1px solid var(--line);
+    width: 100%;
+    flex-shrink: 1;
+  }
+  .topbar .tools[data-open="true"] {
+    display: flex;
+  }
+  .topbar .tools .icon-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+  .topbar .tools .bell {
+    display: inline-flex;
+  }
+  .topbar .tools .account-actions {
+    flex: 1 1 100%;
+    gap: 8px;
+  }
+  .topbar .tools .account-actions .btn {
+    flex: 1;
+    min-height: 44px;
+  }
+  .topbar .app-view-switch {
+    font-size: 12px;
+    min-height: 44px;
+    white-space: normal;
+  }
+  .topbar .profile-menu {
+    flex: 1 1 100%;
+    min-width: 0;
+  }
+  .topbar .profile-trigger {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .topbar .profile-popover {
+    position: static;
+    max-width: 100%;
+    width: 100%;
+    margin-top: 8px;
+  }
+  .marketing-nav .wordmark .brand {
+    font-size: 20px;
+    white-space: normal;
+  }
+  .marketing-nav .wordmark .brand small {
+    font-size: 7px;
+  }
+  .marketing-hero {
+    padding-inline: 16px;
+  }
+  .hero-split .btn {
+    min-height: 48px;
+  }
+  .operator-shell .operator-topbar .btn {
+    min-height: 44px;
+    white-space: normal;
+  }
+}
+html[data-app-view="mobile"] .shell .topbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  height: auto;
+  min-height: 0;
+  padding: 14px 16px;
+  position: static;
+}
+html[data-app-view="mobile"] .topbar .space-picker {
+  display: none;
+}
+html[data-app-view="mobile"] .topbar .member-menu-toggle {
+  display: inline-flex;
+  min-height: 44px;
+}
+html[data-app-view="mobile"] .topbar .tools {
+  display: none;
+  grid-column: 1/-1;
+  width: 100%;
+  justify-content: flex-start;
+  border-top: 1px solid var(--line);
+  padding-top: 12px;
+  gap: 8px !important;
+  flex-shrink: 1;
+}
+html[data-app-view="mobile"] .topbar .tools[data-open="true"] {
+  display: flex;
+}
+html[data-app-view="mobile"] .topbar .account-actions {
+  flex: 1 1 100%;
+}
+html[data-app-view="mobile"] .topbar .account-actions .btn {
+  flex: 1;
+}
+html[data-app-view="mobile"] .topbar .profile-popover {
+  position: static;
+  max-width: 100%;
+  width: 100%;
+}
+@media (max-width: 360px) {
+  .marketing-nav .wordmark .brand {
+    font-size: 18px;
+  }
+  .marketing-nav .brand-symbol {
+    width: 30px;
+    height: 30px;
+  }
+  .marketing-nav .brand small {
+    display: none;
+  }
+  .marketing-nav .marketing-menu .account-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .marketing-menu .app-view-switch {
+    grid-column: 1/-1;
+  }
+}
+/* V1.2.6: calm motion, readable surfaces and touch-friendly management. */
+:root {
+  --muted: #53695e;
+}
+html[data-theme="dark"] {
+  --muted: #b6c9bf;
+  color-scheme: dark;
+}
+.public-announcement.announcement-slider {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: #e9f5ef;
+  color: #174d3b;
+  border-block: 1px solid #bfd8c9;
+  padding: 16px clamp(16px, 5vw, 72px);
+  text-align: left;
+  min-height: 76px;
+}
+.announcement-slider .announcement-label {
+  font-size: 10px;
+  letter-spacing: 1.2px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.announcement-slider p {
+  color: inherit;
+  margin: 0;
+  flex: 1;
+  overflow-wrap: anywhere;
+  animation: sw-reveal 0.25s ease-out;
+}
+.announcement-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-shrink: 0;
+  font-size: 12px;
+}
+.announcement-controls button {
+  border: 1px solid currentColor;
+  background: transparent;
+  color: inherit;
+  border-radius: 8px;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px;
+}
+html[data-theme="dark"] .public-announcement.announcement-slider {
+  background: #18392e;
+  color: #d1ebdf;
+  border-color: #365e4d;
+}
+.month-reminder,
+.access-status {
+  background: var(--mint);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+.month-reminder {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.month-reminder strong {
+  display: block;
+  margin: 8px 0;
+}
+.month-reminder p {
+  margin: 0;
+  color: var(--text);
+}
+.access-status h3 {
+  font-size: 22px;
+  margin: 12px 0;
+}
+.reward-earned {
+  font-weight: 650;
+  color: var(--green);
+}
+.household-person {
+  padding: 8px 0 18px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 12px;
+}
+.household-person .member-row {
+  border: 0;
+}
+.household-editor {
+  margin-bottom: 24px;
+}
+.household-editor h3 {
+  margin: 0;
+}
+.household-person .grow {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.profile-settings {
+  padding-bottom: 20px;
+}
+.profile-settings textarea {
+  min-height: 90px;
+  width: 100%;
+}
+.statement-preview {
+  margin-top: 24px;
+}
+.statement-preview .table-scroll {
+  max-height: 400px;
+  overflow: auto;
+}
+.statement-preview td {
+  overflow-wrap: anywhere;
+}
+.auth-card {
+  max-width: 620px;
+}
+.auth-help {
+  flex-wrap: wrap;
+}
+.auth-page input {
+  width: 100%;
+  min-width: 0;
+}
+.auth-page .auth-tabs button {
+  min-height: 44px;
+}
+.signup-flow form[aria-busy="true"] {
+  opacity: 0.8;
+}
+.onboarding-steps {
+  flex-wrap: wrap;
+}
+html[data-theme="dark"] .admin-dashboard,
+html[data-theme="dark"] .admin-workspace,
+html[data-theme="dark"] .operator-shell {
+  background: var(--bg);
+  color: var(--text);
+}
+html[data-theme="dark"] .admin-side,
+html[data-theme="dark"] .admin-context,
+html[data-theme="dark"] .operator-topbar {
+  background: var(--surface);
+  border-color: var(--line);
+}
+html[data-theme="dark"] .admin-nav-group button {
+  color: var(--muted);
+}
+html[data-theme="dark"] .admin-nav-group button.selected,
+html[data-theme="dark"] .admin-metric-icon,
+html[data-theme="dark"] .admin-owner-avatar {
+  background: var(--mint);
+  color: var(--green);
+}
+html[data-theme="dark"] .admin-page-title p,
+html[data-theme="dark"] .admin-mode-note,
+html[data-theme="dark"] .admin-metric > span:last-child,
+html[data-theme="dark"] .admin-side-caption {
+  color: var(--muted);
+}
+html[data-theme="dark"] .admin-chart > svg text {
+  fill: var(--muted);
+}
+html[data-theme="dark"] .referral-promise,
+html[data-theme="dark"] .plan-summary,
+html[data-theme="dark"] .choice-card {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--line);
+}
+html[data-theme="dark"] .choice-card.selected {
+  background: var(--mint);
+  border-color: var(--green);
+}
+@keyframes sw-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+  .btn,
+  .icon-btn,
+  .choice-card,
+  .admin-nav-group button,
+  .sidebar nav button {
+    transition:
+      background-color 0.18s ease,
+      border-color 0.18s ease,
+      box-shadow 0.18s ease,
+      transform 0.18s ease;
+  }
+  .btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 12px #123c2414;
+  }
+  .btn:active:not(:disabled) {
+    transform: translateY(0);
+  }
+  .modal,
+  .household-editor,
+  .access-status,
+  .statement-preview {
+    animation: sw-reveal 0.24s ease-out;
+  }
+  .bar i {
+    transition: width 0.35s ease;
+  }
+  .switch i {
+    transition: transform 0.2s ease;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
+@media (max-width: 760px) {
+  .announcement-slider {
+    flex-wrap: wrap;
+    gap: 10px !important;
+  }
+  .announcement-slider p {
+    flex-basis: 100%;
+    order: 2;
+  }
+  .announcement-controls {
+    margin-left: auto;
+  }
+  .month-reminder {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .month-reminder .btn {
+    width: 100%;
+  }
+  .household-person .actions .btn {
+    min-height: 44px;
+  }
+  .household-editor,
+  .profile-settings {
+    min-width: 0;
+  }
+  .room-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+.access-overview {
+  margin-bottom: 24px;
+}
+.access-overview .access-status {
+  margin-bottom: 10px;
+}
+.access-overview .access-status h3 {
+  font-size: 20px;
+}
+/* Grid tracks may shrink below their content's min-content width, so long unbroken names, long options, large
+   amounts or 140% text never push cards past the screen (checked from 320px to 1920px). */
+.content-grid > *,
+.dashboard-grid > *,
+.right-stack > *,
+.room-grid > *,
+.book-stats > *,
+.form-grid > * {
+  min-width: 0;
+}
+select {
+  max-width: 100%;
+}
+.book-stats h2,
+.balance-hero h2,
+.stat h2,
+.member-row strong,
+.receipt-amount strong,
+.page-heading h1,
+.space-picker strong {
+  overflow-wrap: anywhere;
+}
+.section-heading {
+  flex-wrap: wrap;
+}
+/* Touch targets: controls below the 24px WCAG 2.2 minimum get a larger hit area without changing their look;
+   compact chips, small/text buttons and links reach 44px on touch screens only, keeping desktop density unchanged. */
+.hero-bottom button {
+  position: relative;
+}
+.hero-bottom button::after {
+  content: "";
+  position: absolute;
+  inset: -12px -6px;
+}
+.marketing-footer button,
+.marketing-footer a {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+}
+@media (pointer: coarse) {
+  .chips button,
+  .chips > label,
+  .btn.small,
+  .btn.text,
+  .link,
+  .auth-tabs button,
+  .announcement-controls button {
+    min-height: 44px;
+  }
+  .switch {
+    position: relative;
+  }
+  .switch::after {
+    content: "";
+    position: absolute;
+    inset: -10px -4px;
+  }
+}

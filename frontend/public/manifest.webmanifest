@@ -1,0 +1,46 @@
+{
+  "name": "SplitWisee",
+  "short_name": "SplitWisee",
+  "start_url": "/#app",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#F7FAF8",
+  "theme_color": "#147D64",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ],
+  "description": "SplitWisee - shared expenses, receipts and monthly bookkeeping",
+  "id": "/",
+  "orientation": "any",
+  "categories": ["finance", "productivity"],
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "Add an expense",
+      "short_name": "Add expense",
+      "url": "/?action=add#app"
+    },
+    {
+      "name": "Monthly settlements",
+      "short_name": "Settlements",
+      "url": "/?view=settle#app"
+    }
+  ]
+}

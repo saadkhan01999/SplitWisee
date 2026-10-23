@@ -1,0 +1,15 @@
+GREEN HOUSE MARKET
+SAMPLE RECEIPT - FICTIONAL
+16/10/2026 12:30
+
+Milk                    2.50
+
+Bread                    2.00
+Vegetables               10.00
+SUBTOTAL                14.50
+VAT                     0.00
+TOTAL                        14.50
+CASH TENDERED           20.00
+CHANGE                  5.50
+
+Thank you for shopping.

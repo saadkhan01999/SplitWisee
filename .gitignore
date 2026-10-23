@@ -1,0 +1,23 @@
+# Dependencies (each package installs its own)
+node_modules/
+
+# Secrets: only the .env.example templates are committed
+.env
+.env.*
+!.env.example
+
+# Private runtime data: uploaded receipts never belong in the repository
+private-receipts/
+
+# Build output (frontend: npm run build creates dist/ on the build machine)
+dist/
+coverage/
+
+# Logs and local reports
+*.log
+/preflight*.json
+backend/preflight*.json
+
+docs/
+deploy/
+CHANGELOG.md

@@ -1,0 +1,7 @@
+CITY TAXI LTD
+
+Journey 21/10/2026
+Fare                                                            12.40
+Booking fee                                                                080
+Tip                                                               1.50
+Amount charged                                £14.70
