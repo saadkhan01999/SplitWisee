@@ -3,7 +3,7 @@ import { api } from "../../api/client.js";
 import { useAsyncTask } from "../../app/hooks.js";
 import { readPreference } from "../../app/storage.js";
 import { Button } from "../../components/Button.jsx";
-import { Field, FormError, FormNotice } from "../../components/Field.jsx";
+import { DemoCode, Field, FormError, FormNotice } from "../../components/Field.jsx";
 
 // Email + password sign-in, registration, email verification and password reset.
 
@@ -40,6 +40,7 @@ export function PasswordAuth({ initialStep = "login", allowRegistration = true, 
   }));
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState("");
+  const [demoCode, setDemoCode] = useState("");
   const { busy, error, setError, run } = useAsyncTask();
   const { fields, submit } = STEPS[step];
 
@@ -47,12 +48,14 @@ export function PasswordAuth({ initialStep = "login", allowRegistration = true, 
   const goTo = (next) => {
     setStep(next);
     setMessage("");
+    setDemoCode("");
     setError("");
   };
 
   async function handleSubmit(event) {
     event.preventDefault();
     setMessage("");
+    setDemoCode("");
     await run(async () => {
       const body = Object.fromEntries(fields.map((key) => [key, values[key].trim?.() ?? values[key]]));
       if (fields.includes("password")) body.password = values.password;
@@ -62,6 +65,11 @@ export function PasswordAuth({ initialStep = "login", allowRegistration = true, 
       setMessage(result.message || "Done.");
       if (step === "verify" || step === "reset")
         setValues((current) => ({ ...current, password: "", token: "" }));
+      // Demo deployment without email: the API returns the code, which is shown and filled in for the next step.
+      if (result.demoCode) {
+        setDemoCode(result.demoCode);
+        setValues((current) => ({ ...current, token: result.demoCode }));
+      }
     });
   }
 
@@ -135,6 +143,7 @@ export function PasswordAuth({ initialStep = "login", allowRegistration = true, 
         </Field>
       )}
       <FormNotice>{message}</FormNotice>
+      <DemoCode code={demoCode} />
       <FormError>{error}</FormError>
       <Button type="submit" full disabled={busy}>
         {busy ? "Please wait…" : submit}

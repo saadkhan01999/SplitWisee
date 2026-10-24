@@ -47,3 +47,16 @@ export function FormNotice({ children }) {
     </p>
   ) : null;
 }
+
+/** A one-time code returned by a demo deployment that has no email set up, shown instead of being emailed. */
+export function DemoCode({ code }) {
+  return code ? (
+    <div className="notice demo-code" role="status">
+      <p>
+        <strong>Demo mode:</strong> email is not set up, so your code is shown here instead of being sent. It
+        has been filled in for you.
+      </p>
+      <code>{code}</code>
+    </div>
+  ) : null;
+}

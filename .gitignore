@@ -13,6 +13,9 @@ private-receipts/
 dist/
 coverage/
 
+# Vercel CLI project link and local build output
+.vercel/
+
 # Logs and local reports
 *.log
 /preflight*.json

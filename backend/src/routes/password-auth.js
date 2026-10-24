@@ -49,6 +49,7 @@ export function installPasswordAuth(
       const referredBy = await platform.referrer(req.body.referralCode);
       const passwordHash = await argon2.hash(password, argonOptions);
       const existing = await users.findOne({ email: e });
+      let demoCode;
       if (!existing) {
         const id = uid();
         try {
@@ -63,7 +64,7 @@ export function installPasswordAuth(
             referredBy,
           });
           if (await mayEmail("verify-mail", e))
-            await sendCode(e, "Verify email", await issueToken(id, "verify"));
+            demoCode = (await sendCode(e, "Verify email", await issueToken(id, "verify")))?.demoCode;
         } catch (err) {
           if (err.code !== 11e3) throw err;
         }
@@ -71,6 +72,7 @@ export function installPasswordAuth(
       res.status(202).json({
         message:
           "If this is a new account, a verification code has been sent. Existing users can sign in or reset their password.",
+        ...(demoCode && { demoCode }),
       });
     }),
   );
@@ -95,10 +97,14 @@ export function installPasswordAuth(
     limit("resend"),
     endpoint(async (req, res) => {
       const u = await users.findOne({ email: email(req.body.email) });
+      let demoCode;
       if (u && !u.verifiedAt && (await mayEmail("verify-mail", u.email))) {
-        await sendCode(u.email, "Verify email", await issueToken(u.id, "verify"));
+        demoCode = (await sendCode(u.email, "Verify email", await issueToken(u.id, "verify")))?.demoCode;
       }
-      res.status(202).json({ message: "If verification is needed, a new code has been sent." });
+      res.status(202).json({
+        message: "If verification is needed, a new code has been sent.",
+        ...(demoCode && { demoCode }),
+      });
     }),
   );
   const dummyHash = argon2.hash(crypto.randomBytes(32).toString("hex"), { type: argon2.argon2id });
@@ -135,9 +141,13 @@ export function installPasswordAuth(
     endpoint(async (req, res) => {
       const address = email(req.body.email);
       const u = await users.findOne({ email: address });
+      let demoCode;
       if (u && (await mayEmail("reset-mail", address)))
-        await sendCode(u.email, "Reset password", await issueToken(u.id, "reset"));
-      res.status(202).json({ message: "If the account exists, a reset code has been sent." });
+        demoCode = (await sendCode(u.email, "Reset password", await issueToken(u.id, "reset")))?.demoCode;
+      res.status(202).json({
+        message: "If the account exists, a reset code has been sent.",
+        ...(demoCode && { demoCode }),
+      });
     }),
   );
   app.post(

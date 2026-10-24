@@ -4,7 +4,7 @@ import { api, apiUrl } from "../../api/client.js";
 import { useAsyncTask } from "../../app/hooks.js";
 import { readPreference, writePreference } from "../../app/storage.js";
 import { Button } from "../../components/Button.jsx";
-import { Field, FormError } from "../../components/Field.jsx";
+import { DemoCode, Field, FormError } from "../../components/Field.jsx";
 import { selectPendingInvite } from "../session/sessionSlice.js";
 import { loadPublicConfig, selectPublicConfig, selectPublicConfigStatus } from "../website/siteSlice.js";
 
@@ -42,6 +42,7 @@ export function CodeSignIn({ intent = "signin", onSignedIn, onUsePassword }) {
   }));
   const [challengeId, setChallengeId] = useState(null);
   const [code, setCode] = useState("");
+  const [demoCode, setDemoCode] = useState("");
   const [resendAt, setResendAt] = useState(0);
   const secondsLeft = useCountdown(resendAt);
   const { busy, error, setError, run } = useAsyncTask();
@@ -56,7 +57,7 @@ export function CodeSignIn({ intent = "signin", onSignedIn, onUsePassword }) {
   const requestCode = () =>
     run(async () => {
       if (!available) throw new Error("This sign-in method is not configured. Choose another method.");
-      const { challengeId: id } = await api.post("/auth/quick/start", {
+      const { challengeId: id, demoCode: shown = "" } = await api.post("/auth/quick/start", {
         method,
         identifier: form.identifier.trim(),
         name: signup ? form.name.trim() : undefined,
@@ -64,7 +65,9 @@ export function CodeSignIn({ intent = "signin", onSignedIn, onUsePassword }) {
         intent: signup ? "signup" : "login",
       });
       setChallengeId(id);
-      setCode("");
+      // Demo deployment without email: the API returns the code, which is shown and filled in.
+      setDemoCode(shown);
+      setCode(shown);
       setResendAt(Date.now() + RESEND_SECONDS * 1000);
     });
 
@@ -105,6 +108,7 @@ export function CodeSignIn({ intent = "signin", onSignedIn, onUsePassword }) {
             onChange={(event) => setCode(event.target.value.replace(/\D/g, ""))}
           />
         </Field>
+        <DemoCode code={demoCode} />
         <FormError>{error}</FormError>
         <Button type="submit" full disabled={busy || code.length !== 6}>
           {busy ? "Checking…" : "Verify & continue"}

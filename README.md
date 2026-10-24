@@ -216,3 +216,19 @@ are covered: [REQUIREMENTS-TRACEABILITY.md](docs/REQUIREMENTS-TRACEABILITY.md).
 Recommended: **Hostinger VPS KVM 2** (Ubuntu 24.04, Node 22, Nginx + Let's Encrypt, systemd) with **MongoDB Atlas**
 and a private receipt folder with off-site backups. Nginx serves `frontend/dist` and proxies `/api` to the API on
 `127.0.0.1:5000`. Step by step: [DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md).
+
+### Vercel (demo)
+
+[`vercel.json`](vercel.json) deploys both packages as one Vercel project with two services on one domain: `/api/*` goes
+to the `backend` service (Express, entry point [`backend/src/vercel.js`](backend/src/vercel.js)) and every other path
+to the `frontend` service (the Vite build). Import the repository with the root directory left at the repository root
+and the **Services** framework preset.
+
+- Set `MONGODB_URI` and `MONGODB_DB` in the project's environment variables, and allow `0.0.0.0/0` under Atlas
+  Network Access (Vercel has no fixed IP addresses). Leave `VITE_API_BASE_URL` empty.
+- `APP_ORIGIN` defaults to the deployment's own address; set it only for a custom domain that is not the project's
+  primary production domain.
+- Without `SMTP_HOST`, sign-up, sign-in and reset codes are shown on screen instead of being emailed, so anyone can sign
+  in as any address. That is for showing the app only: set `DEMO_SHOW_CODES=false` or configure SMTP before real use.
+- Receipts are kept in the function's temporary folder and disappear when Vercel recycles it, and Vercel limits
+  request bodies to 4.5 MB. Use the VPS deployment above for production.

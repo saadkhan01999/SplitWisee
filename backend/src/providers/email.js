@@ -1,9 +1,16 @@
 import nodemailer from "nodemailer";
+
+// Demo deployments without email (DEMO_SHOW_CODES=true and no SMTP_HOST): the code goes back to the browser, which
+// shows it on screen. Anyone who types an address can then use its code, so never enable this for real users.
+export const showsCodesOnScreen = () => !process.env.SMTP_HOST && process.env.DEMO_SHOW_CODES === "true";
+
 // Sends one-time codes. Without SMTP, codes are printed only in non-production with DEV_SHOW_EMAIL_CODES=true;
 // otherwise the request fails with 503 and no account is pretended to be verified.
+// Resolves to `{ demoCode }` when the code is shown on screen instead of emailed, otherwise to nothing.
 export function createCodeSender({ production, override }) {
   return async function sendCode(address, subject, code) {
     if (override) return override(address, subject, code);
+    if (showsCodesOnScreen()) return { demoCode: code };
     if (!process.env.SMTP_HOST) {
       if (!production && process.env.DEV_SHOW_EMAIL_CODES === "true") {
         console.info(JSON.stringify({ developmentEmail: address, subject, code }));
