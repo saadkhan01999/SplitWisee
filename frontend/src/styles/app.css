@@ -4002,3 +4002,17 @@ fieldset legend h3 {
 code {
   overflow-wrap: anywhere;
 }
+
+.notice.demo-code {
+  flex-direction: column;
+  gap: 8px;
+}
+.notice.demo-code p {
+  margin: 0;
+}
+.notice.demo-code code {
+  font-size: calc(15px * var(--font-scale, 1));
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  user-select: all;
+}

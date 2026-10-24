@@ -88,6 +88,11 @@ export function checkEnvironment(env = process.env) {
       );
     }
   }
+  if (env.DEMO_SHOW_CODES === "true" && !env.SMTP_HOST) {
+    warnings.push(
+      "DEMO_SHOW_CODES is on: sign-in codes are shown on screen, so anyone can use any email address. Demos only.",
+    );
+  }
   if (env.OPERATOR_USER_IDS) {
     warnings.push(
       "OPERATOR_USER_IDS is deprecated. Use SUPERADMIN_USER_ID (exactly one verified user ID); lists are always refused.",

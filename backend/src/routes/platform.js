@@ -2,6 +2,7 @@ import { grantWelcome, accessEvents, redeemCoupon } from "../services/promotions
 import { installAdmin, defaultSettings } from "./admin.js";
 import crypto from "node:crypto";
 import express from "express";
+import { showsCodesOnScreen } from "../providers/email.js";
 import { stripeClient } from "../providers/stripe.js";
 import { twilioConfigured, twilioVerify } from "../providers/twilio.js";
 import { googleConfigured, googleClient } from "../providers/google.js";
@@ -194,7 +195,10 @@ function installPlatform(
     households = db.collection("households"),
     stripe = stripeClient();
   const providers = () => ({
-    email: !!process.env.SMTP_HOST || (!production && process.env.DEV_SHOW_EMAIL_CODES === "true"),
+    email:
+      !!process.env.SMTP_HOST ||
+      (!production && process.env.DEV_SHOW_EMAIL_CODES === "true") ||
+      showsCodesOnScreen(),
     google: googleConfigured(),
     phone: twilioConfigured(),
     billing: !!(stripe && process.env.STRIPE_PRICE_ID && process.env.STRIPE_WEBHOOK_SECRET),
@@ -321,8 +325,9 @@ function installPlatform(
       if (recent) bad("Please wait one minute before requesting another code.", 429);
       if (quota && !(await quota("quick-code", identifier, 5, 36e5)))
         bad("Too many codes were requested for this address. Try again in an hour.", 429);
-      let providerSid;
-      if (method === "email") await sendCode(identifier, "Sign-in verification (10 minute expiry)", code);
+      let providerSid, demoCode;
+      if (method === "email")
+        demoCode = (await sendCode(identifier, "Sign-in verification (10 minute expiry)", code))?.demoCode;
       else {
         const v = await twilioVerify("Verifications", { To: identifier, Channel: method });
         providerSid = v.sid;
@@ -341,7 +346,7 @@ function installPlatform(
         createdAt: /* @__PURE__ */ new Date(),
         expiresAt: new Date(Date.now() + 10 * 6e4),
       });
-      res.json({ challengeId });
+      res.json({ challengeId, ...(demoCode && { demoCode }) });
     }),
   );
   app.post(

@@ -137,6 +137,48 @@ describe("sign-up, sign-in and onboarding", () => {
     expect(api.called("POST", "/auth/verify")[0].body).toEqual({ token: "token-from-email" });
   });
 
+  it("shows and fills in the verification code a demo deployment returns instead of emailing", async () => {
+    const api = mockApi({
+      "GET /me": () => reply(401, { error: "Sign in to continue." }),
+      "GET /public/config": () => CONFIG,
+      "POST /auth/register": () =>
+        reply(202, {
+          message: "If this is a new account, a verification code has been sent.",
+          demoCode: "c0de",
+        }),
+      "POST /auth/verify": () => ({ message: "Email verified. You can now sign in." }),
+    });
+    const { user: person } = startAt("/#signup");
+
+    await person.click(await screen.findByRole("button", { name: "Use email and password" }));
+    await person.type(screen.getByLabelText("Your name"), "Ben Carter");
+    await person.type(screen.getByLabelText("Email address"), "ben@example.test");
+    await person.type(screen.getByLabelText("Password (12–128 characters)"), "a long passphrase");
+    await person.click(screen.getByRole("button", { name: "Create account" }));
+
+    expect(await screen.findByText("c0de")).toBeInTheDocument();
+    expect(screen.getByLabelText("Verification code")).toHaveValue("c0de");
+    await person.click(screen.getByRole("button", { name: "Verify email" }));
+    expect(await screen.findByRole("heading", { name: "Sign in with your password" })).toBeInTheDocument();
+    expect(api.called("POST", "/auth/verify")[0].body).toEqual({ token: "c0de" });
+    expect(screen.queryByText("c0de")).not.toBeInTheDocument();
+  });
+
+  it("shows and fills in the sign-in code a demo deployment returns instead of emailing", async () => {
+    mockApi({
+      "GET /me": () => reply(401, { error: "Sign in to continue." }),
+      "GET /public/config": () => CONFIG,
+      "POST /auth/quick/start": () => ({ challengeId: "challenge-1", demoCode: "654321" }),
+    });
+    const { user: person } = startAt("/#signup");
+
+    await person.type(await screen.findByLabelText("Your name"), "Ben Carter");
+    await person.type(screen.getByLabelText("Email address"), "ben@example.test");
+    await person.click(screen.getByRole("button", { name: "Send verification code" }));
+    expect(await screen.findByText("654321")).toBeInTheDocument();
+    expect(screen.getByLabelText("Verification code")).toHaveValue("654321");
+  });
+
   it("joins a household from an invitation link", async () => {
     let households = [];
     const api = mockApi({
