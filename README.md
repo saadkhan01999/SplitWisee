@@ -225,7 +225,9 @@ to the `frontend` service (the Vite build). Import the repository with the root 
 and the **Services** framework preset.
 
 - Set `MONGODB_URI` and `MONGODB_DB` in the project's environment variables, and allow `0.0.0.0/0` under Atlas
-  Network Access (Vercel has no fixed IP addresses). Leave `VITE_API_BASE_URL` empty.
+  Network Access (Vercel has no fixed IP addresses). Leave `VITE_API_BASE_URL` empty. Do not copy the rest of
+  `.env.example`: its local-development values do not apply on Vercel. The API ignores `RECEIPT_DIR`,
+  `TRUST_PROXY_HOPS=0` and a non-HTTPS `APP_ORIGIN` there, and `NODE_ENV` should be left to Vercel.
 - `APP_ORIGIN` defaults to the deployment's own address; set it only for a custom domain that is not the project's
   primary production domain.
 - Without `SMTP_HOST`, sign-up, sign-in and reset codes are shown on screen instead of being emailed, so anyone can sign
