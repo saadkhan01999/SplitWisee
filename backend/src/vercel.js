@@ -24,14 +24,27 @@ const addresses = [
 ]
   .filter(Boolean)
   .map((host) => `${env.VERCEL_ENV === "development" ? "http" : "https"}://${host}`); // development: `vercel dev`
-env.APP_ORIGIN ||= addresses[0];
-env.TRUST_PROXY_HOPS ||= "1"; // Vercel's edge sets X-Forwarded-For to the client address
+const deployed = env.VERCEL_ENV === "production" || env.VERCEL_ENV === "preview";
+const receiptDir = path.join(os.tmpdir(), "splitwisee-receipts");
+
+// Local-development values copied from .env.example cannot work here, so they are replaced (and reported below):
+// a deployed function is always served over HTTPS behind one Vercel proxy, and only the temporary folder is writable.
+const ignored = [];
+if (deployed && env.APP_ORIGIN && !env.APP_ORIGIN.startsWith("https://")) ignored.push("APP_ORIGIN");
+if (env.TRUST_PROXY_HOPS && !Number(env.TRUST_PROXY_HOPS)) ignored.push("TRUST_PROXY_HOPS");
+if (env.RECEIPT_DIR && path.resolve(env.RECEIPT_DIR) !== receiptDir) ignored.push("RECEIPT_DIR");
+if ((!env.APP_ORIGIN || ignored.includes("APP_ORIGIN")) && addresses.length) env.APP_ORIGIN = addresses[0];
+if (!Number(env.TRUST_PROXY_HOPS)) env.TRUST_PROXY_HOPS = "1"; // Vercel sets X-Forwarded-For to the client address
 env.DEMO_SHOW_CODES ||= "true";
 
 async function start() {
   // The production rules in checkEnvironment (SMTP, Stripe billing, RECEIPT_DIR) describe the VPS deployment. A Vercel
   // demo runs without them, so only the base checks (MongoDB URI, origin format) stop it here.
   const { errors, warnings } = checkEnvironment({ ...env, NODE_ENV: "development" });
+  if (ignored.length)
+    warnings.push(
+      `${ignored.join(", ")} ignored on Vercel. Remove them from the project's environment variables.`,
+    );
   for (const warning of warnings) console.warn(`Configuration warning: ${warning}`);
   if (errors.length) throw new Error(errors.map((error) => `Configuration error: ${error}`).join("\n"));
 
@@ -42,7 +55,7 @@ async function start() {
       corsOrigins: [...new Set([...parseOrigins(env.CORS_ORIGINS), ...addresses])].filter(
         (origin) => origin !== env.APP_ORIGIN,
       ),
-      receiptDir: env.RECEIPT_DIR || path.join(os.tmpdir(), "splitwisee-receipts"),
+      receiptDir,
     });
   } catch (error) {
     await client.close();
