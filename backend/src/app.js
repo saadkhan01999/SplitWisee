@@ -48,7 +48,8 @@ const safeUser = (user) => ({
  *
  * @param {import("mongodb").Db} db
  * @param {object} [options] overrides for tests and tools:
- *   origin, apiOrigin, corsOrigins, production, receiptDir, sendCode, now (clock for authentication locks)
+ *   origin, apiOrigin, corsOrigins, production, receiptDir, sendCode, now (clock for authentication locks),
+ *   sameHostOrigin (also accept requests whose Origin is the HTTPS address they were sent to; used on Vercel)
  */
 export async function createApp(db, options = {}) {
   const production = options.production ?? process.env.NODE_ENV === "production";
@@ -91,7 +92,7 @@ export async function createApp(db, options = {}) {
     noStore,
     noIndex,
     limiters.api,
-    requireAllowedOrigin([origin, ...corsOrigins]),
+    requireAllowedOrigin([origin, ...corsOrigins], { sameHost: Boolean(options.sameHostOrigin) }),
   );
 
   const cookieName = production ? "__Host-th_session" : "th_session";
