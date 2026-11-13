@@ -1,4 +1,4 @@
-# CoinSplit v1.4.0
+# CoinSplit v1.4.1
 
 Shared household expenses for flats, houses, families and hostels: receipt scanning, exact-pence splits, monthly
 closings, member-to-member repayment tracking, bookkeeping, referrals and a £0.99/month subscription, plus a separate
@@ -12,6 +12,20 @@ The project is two independent packages:
 | [`frontend/`](frontend) | React 19, Redux Toolkit, Vite 8, Tesseract.js + PDF.js (in-browser OCR), jsPDF | `npm run dev` → <http://localhost:5173> | static files from `npm run build` |
 
 There is no demo mode, seed data or sample household: every record comes from real sign-ups through the API.
+
+## Website polish (v1.4.1)
+
+- Animations with [Framer Motion](https://motion.dev) (`framer-motion` 14.7.1): staggered hero entrance, sections
+  and cards that rise into view, spring hover/press on buttons and cards, an animated FAQ and phone menu. Visitors
+  whose device asks for reduced motion get no movement. The website and its animation library load as their own
+  chunk, so the signed-in app does not download them.
+- Sticky frosted header with a reading-progress line, the current section highlighted, and section links that
+  scroll smoothly to just below the header (the phone menu closes first). A **Back to top** button appears after
+  scrolling a screen down.
+- New highlights strip, card-style steps, gradient call to action and a full footer (product, account and support
+  links, copyright, version).
+- Favicon from the new logo: `favicon.svg` (switches to a light colour on dark browser tabs) and a 16/32/48 px
+  `favicon.ico`, linked from the website, the control centre and the offline page.
 
 ## Update Round 02 (v1.4.0)
 

@@ -1,6 +1,6 @@
 {
   "name": "splitwisee-frontend",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "CoinSplit web app (member PWA and operator console). React 19 + Redux Toolkit, built with Vite.",
   "private": true,
   "type": "module",
@@ -20,6 +20,7 @@
   "dependencies": {
     "@reduxjs/toolkit": "^2.13.0",
     "@tesseract.js-data/eng": "^1.0.0",
+    "framer-motion": "14.7.1",
     "html2canvas": "^1.4.1",
     "jspdf": "^4.2.1",
     "pdfjs-dist": "^6.4.299",

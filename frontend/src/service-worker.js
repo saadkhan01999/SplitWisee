@@ -4,7 +4,15 @@
 const VERSION = "__APP_VERSION__";
 const SHELL_CACHE = `splitwisee-shell-${VERSION}`;
 const ASSET_CACHE = `splitwisee-assets-${VERSION}`;
-const SHELL = ["/offline.html", "/manifest.webmanifest", "/icon.svg", "/icon-192.png", "/icon-512.png"];
+const SHELL = [
+  "/offline.html",
+  "/manifest.webmanifest",
+  "/favicon.svg",
+  "/favicon.ico",
+  "/icon.svg",
+  "/icon-192.png",
+  "/icon-512.png",
+];
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
