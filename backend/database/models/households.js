@@ -24,6 +24,21 @@ export default aggregate(["id", "name", "members", "expenses", "version"], {
     },
   },
   expenses: { bsonType: "array" },
+  periods: {
+    bsonType: "array",
+    items: {
+      bsonType: "object",
+      required: ["id", "name", "start", "end", "status"],
+      properties: {
+        id: idField,
+        name: { bsonType: "string", maxLength: 60 },
+        start: { bsonType: "string" },
+        end: { bsonType: "string" },
+        status: { enum: ["draft", "closed"] },
+      },
+    },
+  },
+  legalHold: { bsonType: "object" },
   version: { bsonType: ["int", "long", "double"], minimum: 1 },
   currency: { enum: ["GBP"] },
 });

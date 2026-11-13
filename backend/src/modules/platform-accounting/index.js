@@ -136,7 +136,7 @@ export function accountSheets(report) {
         ]
       : [["No records"]];
   return {
-    "Read me": [["SplitWisee monthly accountant pack", report.month], ...report.notes.map((n) => [n])],
+    "Read me": [["CoinSplit monthly accountant pack", report.month], ...report.notes.map((n) => [n])],
     "Monthly statement": rows(monthlyStatement(report)),
     "Balance sheet movements": rows(balanceMovements(report)),
     Summary: rows(report.summary),

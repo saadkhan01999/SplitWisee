@@ -1,6 +1,9 @@
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import { apiUrl } from "../../api/client.js";
-import { formatMoney } from "../../utils/format.js";
+import { formatDate, formatLongDate, formatMoney } from "../../utils/format.js";
+import { selectHousehold } from "../household/householdSlice.js";
+import { receiptRetentionDate, useReceiptRecords } from "./receiptRetention.js";
 import { formatItemAmount } from "./receiptRecord.js";
 
 export const receiptUrl = (householdId, receiptId, { inline = false } = {}) =>
@@ -12,7 +15,11 @@ export const receiptUrl = (householdId, receiptId, { inline = false } = {}) =>
 export function ReceiptEvidence({ expense, householdId }) {
   const { receipt, receiptScan: scan } = expense;
   const [previewFailed, setPreviewFailed] = useState(false);
+  const household = useSelector(selectHousehold);
+  const records = useReceiptRecords(household);
   if (!receipt && !scan) return null;
+  const keepUntil = receiptRetentionDate(household, expense);
+  const removedAt = receipt && records?.get(receipt.id)?.purgedAt;
 
   const inlineUrl = receipt && receiptUrl(householdId, receipt.id, { inline: true });
   const isImage = receipt?.mime?.startsWith("image/");
@@ -28,7 +35,16 @@ export function ReceiptEvidence({ expense, householdId }) {
         Compare the saved expense with the uploaded file. Scanned values can contain errors.
       </p>
 
-      {receipt ? (
+      {receipt && (
+        <p className={`retention-note ${removedAt ? "removed" : ""}`.trim()} role="note">
+          {removedAt
+            ? `The original file was removed on ${formatDate(removedAt)} under the receipt retention policy. This record and the closing sheet are kept.`
+            : keepUntil
+              ? `Original file kept until ${formatLongDate(keepUntil)}: one month after this period was locked. Download it before then if you need a copy.`
+              : "Original file kept while this period is open, and for one more month after it is locked."}
+        </p>
+      )}
+      {receipt && removedAt ? null : receipt ? (
         <>
           <div className="receipt-source">
             {isImage && !previewFailed ? (

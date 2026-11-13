@@ -26,7 +26,7 @@ export function PaymentStatusForm({ closingId, paymentId, status }) {
 
   const amount = formatMoney(payment.amountPence);
   const text = {
-    sent: `Only continue after sending ${amount} to ${memberName(payment.to)} from your bank. Reference: ${payment.reference}. SplitWisee does not move money.`,
+    sent: `Only continue after sending ${amount} to ${memberName(payment.to)} from your bank. Reference: ${payment.reference}. CoinSplit does not move money.`,
     received: `Confirm only after checking that ${amount} from ${memberName(payment.from)} has arrived in your account. This is your confirmation, not bank verification.`,
     disputed: "Describe what went wrong. The payment stays outstanding until it is resolved.",
   }[status];

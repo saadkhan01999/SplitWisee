@@ -1,5 +1,6 @@
 import { cleanReceiptScan } from "../modules/receipts/metadata.js";
 import { applyAction, uid } from "../modules/calculation-engine/index.js";
+import { londonToday, monthRange, periodName } from "../modules/periods/index.js";
 const fail = (message, status = 400) => {
   throw Object.assign(new Error(message), { status });
 };
@@ -55,6 +56,8 @@ const PAYLOADS = {
   resolveExpense: (p) => ({ id: ref(p.id), reason: str(p.reason) }),
   reverse: (p) => ({ id: ref(p.id), date: str(p.date), reason: str(p.reason) }),
   close: (p) => ({ start: str(p.start), end: str(p.end) }),
+  periodCreate: (p) => ({ name: str(p.name), start: str(p.start), end: str(p.end) }),
+  periodUpdate: (p) => ({ id: ref(p.id), name: str(p.name), start: str(p.start), end: str(p.end) }),
   payment: (p) => ({
     closingId: ref(p.closingId),
     id: ref(p.id),
@@ -86,8 +89,9 @@ export function cleanActionPayload(type, payload) {
 }
 
 export const publicState = (s) => {
-  const { _id, processedKeys, ...rest } = s;
-  return rest;
+  const { _id, processedKeys, legalHold, ...rest } = s;
+  // Members only learn that receipts are being kept; the operator's reason stays private.
+  return legalHold?.active ? { ...rest, legalHold: true } : rest;
 };
 
 export function createHouseholdLoader(households) {
@@ -126,6 +130,7 @@ export function installHouseholds(app, { db, session, endpoint, load, requirePai
         !["house", "flat", "room", "family", "hostel"].includes(req.body.type)
       )
         fail("Enter a household name and valid type.");
+      const month = monthRange(londonToday());
       const s = {
         id: uid(),
         name,
@@ -144,6 +149,17 @@ export function installHouseholds(app, { db, session, endpoint, load, requirePai
         ],
         expenses: [],
         closings: [],
+        // A new household starts with the current calendar month as its open settlement period.
+        periods: [
+          {
+            id: uid(),
+            name: periodName(month.start, month.end),
+            ...month,
+            status: "draft",
+            createdAt: new Date().toISOString(),
+            createdBy: req.user.id,
+          },
+        ],
         audit: [
           {
             id: uid(),

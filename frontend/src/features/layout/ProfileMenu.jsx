@@ -74,6 +74,7 @@ export function ProfileMenu() {
               {label}
             </button>
           ))}
+          {user?.operator && <a href="/admin/">Superadmin console</a>}
           <button type="button" onClick={() => choose(dialogOpened("install"))}>
             Install mobile app
           </button>

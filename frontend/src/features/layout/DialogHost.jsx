@@ -10,7 +10,9 @@ import { NewHouseholdForm } from "../household/NewHouseholdForm.jsx";
 import { InstallGuide } from "../install/InstallGuide.jsx";
 import { ActivityPanel } from "../notifications/ActivityPanel.jsx";
 import { SupportRequestForm } from "../settings/SupportRequestForm.jsx";
-import { ClosingForm } from "../settlements/ClosingForm.jsx";
+import { ClosingSheetView } from "../settlements/ClosingSheetView.jsx";
+import { StartSettlement } from "../settlements/StartSettlement.jsx";
+import { SectionsMenu } from "./SectionsMenu.jsx";
 import { PaymentStatusForm } from "../settlements/PaymentStatusForm.jsx";
 
 const DIALOGS = {
@@ -26,7 +28,9 @@ const DIALOGS = {
     component: ExpenseReviewForm,
   },
   calculator: { title: "Calculator", component: Calculator },
-  closing: { title: "Close a period", component: ClosingForm },
+  closing: { title: "Start new settlement", component: StartSettlement },
+  "closing-sheet": { title: ({ name }) => name || "Closing sheet", component: ClosingSheetView, wide: true },
+  sections: { title: "All sections", component: SectionsMenu },
   payment: {
     title: ({ status }) =>
       ({
@@ -39,7 +43,7 @@ const DIALOGS = {
   activity: { title: "Household activity", component: ActivityPanel },
   invite: { title: "Invite a housemate", component: InviteMemberForm },
   "household-new": { title: "Create or join a household", component: NewHouseholdForm },
-  install: { title: "SplitWisee on your phone", component: InstallGuide },
+  install: { title: "CoinSplit on your phone", component: InstallGuide },
   support: { title: "Contact support", component: SupportRequestForm },
 };
 

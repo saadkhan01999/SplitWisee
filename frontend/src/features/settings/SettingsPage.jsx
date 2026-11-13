@@ -41,7 +41,7 @@ export function SettingsPage() {
   function exportHousehold() {
     saveBlob(
       jsonBlob({ format: "splitwisee-household-v1", exportedAt: new Date().toISOString(), household }),
-      `SplitWisee-${household.name.replace(/[^a-z0-9]+/gi, "-")}-export.json`,
+      `CoinSplit-${household.name.replace(/[^a-z0-9]+/gi, "-")}-export.json`,
     );
   }
 
@@ -131,7 +131,7 @@ export function SettingsPage() {
           </Button>
         </div>
         <p className="caption">
-          {brand.name} v{brand.version}. SplitWisee never connects to your bank or moves money.
+          {brand.name} v{brand.version}. CoinSplit never connects to your bank or moves money.
         </p>
       </section>
     </div>

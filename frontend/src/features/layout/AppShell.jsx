@@ -36,6 +36,7 @@ function PageHeading({ tab }) {
   const dispatch = useDispatch();
   const household = useSelector(selectHousehold);
   const member = useSelector(selectCurrentMember);
+  const admin = useSelector(selectIsHouseholdAdmin);
   const { eyebrow, title, intro } = tabById(tab);
   const firstName = member?.name.split(" ")[0];
 
@@ -47,12 +48,23 @@ function PageHeading({ tab }) {
         <p>{intro}</p>
       </div>
       <div className="heading-actions" data-no-capture>
-        <Button variant="outline" icon="people" onClick={() => dispatch(dialogOpened("invite"))}>
-          Invite member
-        </Button>
-        <Button icon="plus" onClick={() => dispatch(dialogOpened("expense-new"))}>
-          Add expense
-        </Button>
+        {tab === "settle" ? (
+          // Settlements: one owner/admin action instead of Add expense / Invite member; members see none.
+          admin && (
+            <Button icon="plus" onClick={() => dispatch(dialogOpened("closing"))}>
+              Start new settlement
+            </Button>
+          )
+        ) : (
+          <>
+            <Button variant="outline" icon="people" onClick={() => dispatch(dialogOpened("invite"))}>
+              Invite member
+            </Button>
+            <Button icon="plus" onClick={() => dispatch(dialogOpened("expense-new"))}>
+              Add expense
+            </Button>
+          </>
+        )}
       </div>
     </div>
   );
@@ -99,9 +111,12 @@ export function AppShell() {
       <div className="shell">
         <TopBar />
         <main id="capture">
-          <PageHeading tab={tab} />
-          <MonthReminderBanner />
-          <Page />
+          {/* Keyed by section so each change replays a short entrance transition (see .page-transition). */}
+          <div className="page-transition" key={tab}>
+            <PageHeading tab={tab} />
+            <MonthReminderBanner />
+            <Page />
+          </div>
           <footer className="page-footer">
             <Logo />
             <span>Good homes start with clear conversations.</span>

@@ -57,12 +57,14 @@ export const TABS = [
   },
 ];
 
+/** Phone navigation: the main sections, the central "Add expense" action and "More" for every other section. */
 export const BOTTOM_NAV = [
   { id: "home", label: "Home" },
   { id: "expenses", label: "Expenses" },
   { id: "add", label: "Add" },
   { id: "settle", label: "Settle" },
-  { id: "settings", label: "Account" },
+  { id: "people", label: "Household" },
+  { id: "more", label: "More" },
 ];
 
 export const tabById = (id) => TABS.find((tab) => tab.id === id) ?? TABS[0];

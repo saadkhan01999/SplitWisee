@@ -42,7 +42,7 @@ function OperatorSignIn() {
       </header>
       <div className="auth-layout">
         <aside className="auth-intro">
-          <span className="eyebrow">SPLITWISEE CONTROL CENTRE</span>
+          <span className="eyebrow">COINSPLIT CONTROL CENTRE</span>
           <h2>
             One owner.
             <br />A clear view of everything.
@@ -108,6 +108,24 @@ function OperatorConsole() {
               This account is not the platform owner. Owning or managing a household does not give access to
               the control centre.
             </p>
+            <details>
+              <summary>How the owner gets superadmin access</summary>
+              <ol>
+                <li>
+                  Copy your account ID: <code>{user.id}</code> (also under Account &amp; settings).
+                </li>
+                <li>
+                  On the API server run <code>npm run operator:secret -- {user.id}</code>. It prints{" "}
+                  <code>SUPERADMIN_USER_ID</code>, <code>OPERATOR_TOTP_SECRETS</code> and an authenticator
+                  key.
+                </li>
+                <li>
+                  Set both variables in the API environment (backend/.env, or the Vercel project settings) and
+                  redeploy.
+                </li>
+                <li>Add the key to an authenticator app, reload this page and enter the 6-digit code.</li>
+              </ol>
+            </details>
           </section>
         ) : unlocked ? (
           <AdminDashboard />
@@ -129,7 +147,7 @@ export function AdminApp() {
   else if (session.status === "unavailable")
     content = (
       <StatusScreen
-        title="SplitWisee is unreachable"
+        title="CoinSplit is unreachable"
         message={session.error}
         action={<Button onClick={() => dispatch(checkSession())}>Try again</Button>}
       />

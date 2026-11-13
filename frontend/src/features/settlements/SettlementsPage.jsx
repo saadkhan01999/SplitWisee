@@ -1,11 +1,12 @@
 import { useDispatch, useSelector } from "react-redux";
 import { sum } from "@domain/calculation-engine/index.js";
+import { currentPeriod, monthRange } from "@domain/periods/index.js";
 import { dialogOpened } from "../../app/uiSlice.js";
 import { Avatar } from "../../components/Avatar.jsx";
 import { Button } from "../../components/Button.jsx";
 import { EmptyState } from "../../components/EmptyState.jsx";
 import { Icon } from "../../components/Icon.jsx";
-import { formatMoney, formatShortDate } from "../../utils/format.js";
+import { formatDate, formatMoney, formatShortDate, signedAmount, todayIso } from "../../utils/format.js";
 import {
   selectBalances,
   selectHousehold,
@@ -14,13 +15,8 @@ import {
   selectMemberName,
 } from "../household/householdSlice.js";
 import { selectUser } from "../session/sessionSlice.js";
-
-const PAYMENT_STATUS = {
-  received: "Recipient confirmed",
-  sent: "Sent · awaiting recipient",
-  disputed: "Needs review",
-  requested: "Awaiting transfer",
-};
+import { closingName, closingStatus, closingTotal, PAYMENT_LABEL } from "./closingSheet.js";
+import { useClosingDownloads } from "./useClosingDownloads.js";
 
 function PaymentCard({ closing, payment }) {
   const dispatch = useDispatch();
@@ -48,7 +44,7 @@ function PaymentCard({ closing, payment }) {
       </div>
       <div className="row wrap">
         <span className={`pill ${payment.status === "received" ? "mint" : ""}`.trim()}>
-          {PAYMENT_STATUS[payment.status]}
+          {PAYMENT_LABEL[payment.status]}
         </span>
         <div className="grow" />
         {isPayer && ["requested", "disputed"].includes(payment.status) && (
@@ -72,12 +68,125 @@ function PaymentCard({ closing, payment }) {
   );
 }
 
+function PeriodOverview() {
+  const household = useSelector(selectHousehold);
+  const admin = useSelector(selectIsHouseholdAdmin);
+  const period = currentPeriod(household);
+  const range = period ?? monthRange(todayIso());
+  const approved = household.expenses.filter(
+    (expense) => expense.status === "approved" && expense.date >= range.start && expense.date <= range.end,
+  );
+  const pending = household.closings.flatMap((closing) =>
+    closing.payments.filter((payment) => payment.status !== "received"),
+  );
+  const oldest = household.closings.find((closing) => closing.payments.some((p) => p.status !== "received"));
+
+  return (
+    <div className="period-overview">
+      <section className="card period-card">
+        <span className="eyebrow">{period ? "CURRENT PERIOD" : "NO OPEN PERIOD"}</span>
+        <strong>{period ? period.name : "Start a period"}</strong>
+        <small>
+          {period
+            ? `${formatShortDate(period.start)} – ${formatShortDate(period.end)} · `
+            : "Group the next expenses for settlement. "}
+          {admin ? "Closing review is available to you." : "An owner or admin closes each period."}
+        </small>
+      </section>
+      <section className="card">
+        <small>Household spending</small>
+        <strong>{formatMoney(sum(approved.map(signedAmount)))}</strong>
+        <small>
+          {approved.length} approved {approved.length === 1 ? "expense" : "expenses"}
+          {period ? " this period" : " this month"}
+        </small>
+      </section>
+      <section className="card">
+        <small>Transfers awaiting confirmation</small>
+        <strong>{pending.length}</strong>
+        <small>
+          {pending.length
+            ? `Outstanding from ${oldest ? closingName(oldest) : "locked periods"}`
+            : "Nothing outstanding"}
+        </small>
+      </section>
+    </div>
+  );
+}
+
+function ClosingCard({ closing }) {
+  const dispatch = useDispatch();
+  const household = useSelector(selectHousehold);
+  const { download } = useClosingDownloads();
+  const status = closingStatus(closing);
+  const members = (closing.lines ?? []).filter((line) => line.funded || line.share || line.net).length;
+
+  return (
+    <section className="closing card">
+      <div className="row wrap">
+        <div className="grow">
+          <h3>{closingName(closing)}</h3>
+          <small>
+            {formatShortDate(closing.start)} – {formatShortDate(closing.end)} · locked{" "}
+            {formatDate(closing.createdAt)}
+          </small>
+        </div>
+        <span className={`pill ${status.settled ? "mint" : "warning"}`}>
+          {status.settled
+            ? "Settled"
+            : `${status.pending} pending ${status.pending === 1 ? "transfer" : "transfers"}`}
+        </span>
+      </div>
+      <div className="closing-stats">
+        <div>
+          <small>Total expenses</small>
+          <strong>{formatMoney(closingTotal(household, closing))}</strong>
+        </div>
+        <div>
+          <small>Members</small>
+          <strong>{members}</strong>
+        </div>
+        <div>
+          <small>Confirmed</small>
+          <strong>
+            {status.confirmed} of {status.total}
+          </strong>
+        </div>
+      </div>
+      <div className="actions wrap">
+        <Button
+          variant="outline"
+          size="small"
+          onClick={() =>
+            dispatch(dialogOpened("closing-sheet", { closingId: closing.id, name: closingName(closing) }))
+          }
+        >
+          View closing sheet
+        </Button>
+        <Button variant="text" size="small" icon="download" onClick={() => download("csv", closing)}>
+          CSV
+        </Button>
+      </div>
+      {closing.payments.length ? (
+        closing.payments.map((payment) => (
+          <PaymentCard key={payment.id} closing={closing} payment={payment} />
+        ))
+      ) : (
+        <EmptyState icon="check" title="Everyone is balanced">
+          No transfers were needed for this period.
+        </EmptyState>
+      )}
+    </section>
+  );
+}
+
 export function SettlementsPage() {
   const dispatch = useDispatch();
   const household = useSelector(selectHousehold);
   const balances = useSelector(selectBalances);
   const admin = useSelector(selectIsHouseholdAdmin);
-  const openClosing = () => dispatch(dialogOpened("closing"));
+  const startSettlement = () => dispatch(dialogOpened("closing"));
+  const closings = [...household.closings].sort((a, b) => b.end.localeCompare(a.end));
 
   return (
     <>
@@ -85,51 +194,27 @@ export function SettlementsPage() {
         <Icon name="shield" />
         <span>
           Transfers happen in your own banking app. “Sent” is the payer’s declaration; only the recipient can
-          confirm receipt. SplitWisee never moves money.
+          confirm receipt. Locked closing records stay unchanged. CoinSplit never moves money.
         </span>
       </div>
+      <PeriodOverview />
       <div className="content-grid">
         <section>
           <div className="section-heading">
             <h2>Closing periods</h2>
-            {admin && (
-              <Button size="small" onClick={openClosing}>
-                Close a period
-              </Button>
-            )}
+            {closings.length > 0 && <span className="pill mint">History preserved</span>}
           </div>
-          {household.closings.length ? (
-            household.closings.map((closing) => (
-              <section key={closing.id} className="closing">
-                <div className="row">
-                  <h3>
-                    {formatShortDate(closing.start)} – {formatShortDate(closing.end)}
-                  </h3>
-                  <span className="pill mint">
-                    {closing.payments.every((payment) => payment.status === "received")
-                      ? "Settled"
-                      : "Locked"}
-                  </span>
-                </div>
-                {closing.payments.length ? (
-                  closing.payments.map((payment) => (
-                    <PaymentCard key={payment.id} closing={closing} payment={payment} />
-                  ))
-                ) : (
-                  <EmptyState icon="check" title="Everyone is balanced">
-                    No transfers were needed for this period.
-                  </EmptyState>
-                )}
-              </section>
-            ))
+          {closings.length ? (
+            closings.map((closing) => <ClosingCard key={closing.id} closing={closing} />)
           ) : (
             <section className="card">
               <EmptyState
                 icon="settle"
                 title="A fresh start to settling up"
-                action={admin && <Button onClick={openClosing}>Preview a closing</Button>}
+                action={admin && <Button onClick={startSettlement}>Start new settlement</Button>}
               >
-                Review a weekly, monthly or custom period, then lock the figures to create payment requests.
+                Review the open period, then lock its figures to create payment requests. The next period
+                opens automatically.
                 {!admin && " A household owner or admin locks each period."}
               </EmptyState>
             </section>
@@ -152,7 +237,7 @@ export function SettlementsPage() {
               </div>
             ))}
           <p className="caption">
-            All dates, including confirmed repayments.
+            All dates, including confirmed repayments. Amounts are exact pence from the household ledger.
             <br />
             Combined net balance: {formatMoney(sum(balances.map((row) => row.net)))}
           </p>

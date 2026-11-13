@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { balances, netTransfers } from "@domain/calculation-engine/index.js";
+import { currentPeriod } from "@domain/periods/index.js";
 import { useHouseholdAction } from "../../app/hooks.js";
 import { goToTab } from "../../app/navigationSlice.js";
 import { dialogClosed } from "../../app/uiSlice.js";
@@ -11,15 +12,19 @@ import { Icon } from "../../components/Icon.jsx";
 import { firstDayOfMonth, formatMoney, lastDayOfMonth } from "../../utils/format.js";
 import { selectHousehold, selectHouseholdSaving, selectMemberName } from "../household/householdSlice.js";
 
-/** Preview a period's balances and lock it, which creates one payment request per proposed transfer. */
-export function ClosingForm({ start: initialStart, end: initialEnd }) {
+/**
+ * Preview a period's balances and lock it, which freezes its closing sheet, creates one payment request per
+ * proposed transfer and opens the next period. `onLocked` lets the settlement flow continue to that next period.
+ */
+export function ClosingForm({ start: initialStart, end: initialEnd, onLocked }) {
   const dispatch = useDispatch();
   const household = useSelector(selectHousehold);
   const memberName = useSelector(selectMemberName);
   const saving = useSelector(selectHouseholdSaving);
   const runAction = useHouseholdAction();
-  const [start, setStart] = useState(initialStart ?? firstDayOfMonth());
-  const [end, setEnd] = useState(initialEnd ?? lastDayOfMonth());
+  const open = currentPeriod(household);
+  const [start, setStart] = useState(initialStart ?? open?.start ?? firstDayOfMonth());
+  const [end, setEnd] = useState(initialEnd ?? open?.end ?? lastDayOfMonth());
 
   const preview = useMemo(() => {
     const expenses = household.expenses.filter((expense) => expense.date >= start && expense.date <= end);
@@ -51,6 +56,7 @@ export function ClosingForm({ start: initialStart, end: initialEnd }) {
 
   async function lock() {
     if (await runAction("close", { start, end }, "Period locked. Payment requests created.")) {
+      if (onLocked) return onLocked();
       dispatch(dialogClosed());
       dispatch(goToTab("settle"));
     }
@@ -59,8 +65,8 @@ export function ClosingForm({ start: initialStart, end: initialEnd }) {
   return (
     <div className="closing-form">
       <p>
-        Review the period before locking it. Original expenses stay unchanged; later corrections are separate
-        entries.
+        Review the period before locking it. Its figures are frozen into a closing sheet; later corrections
+        are separate entries in the next period.
       </p>
       <div className="form-grid">
         <Field label="From">

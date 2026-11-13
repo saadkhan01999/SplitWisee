@@ -1,4 +1,12 @@
 import { manageHousehold } from "../households/index.js";
+import {
+  cleanPeriod,
+  currentPeriod,
+  nextPeriodRange,
+  overlaps,
+  periodName,
+  retentionDate,
+} from "../periods/index.js";
 const VERSION = "1.2.0";
 const uid = () => globalThis.crypto.randomUUID();
 const sum = (a) => a.reduce((s, x) => s + x, 0);
@@ -247,8 +255,14 @@ function applyAction(previous, action, actorId) {
       );
       const lines = balances(s, p.start, p.end);
       const id = uid();
+      s.periods ??= [];
+      const period = s.periods.find((x) => x.status === "draft" && overlaps(x, p));
       s.closings.unshift({
         id,
+        name:
+          period && period.start === p.start && period.end === p.end
+            ? period.name
+            : periodName(p.start, p.end),
         start: p.start,
         end: p.end,
         createdAt: now,
@@ -262,8 +276,57 @@ function applyAction(previous, action, actorId) {
           reference: `TH-${id.slice(0, 6).toUpperCase()}-${i + 1}`,
           status: "requested",
         })),
+        // Frozen closing sheet: later corrections are new entries in an open period and never change these figures.
+        summary: {
+          totalPence: sum(es.map((e) => (e.reversalOf ? -e.amountPence : e.amountPence))),
+          expenseCount: es.length,
+          expenses: es.map((e) => ({
+            id: e.id,
+            title: e.title,
+            date: e.date,
+            category: e.category,
+            amountPence: e.amountPence,
+            purchasedBy: e.purchasedBy,
+            ...(e.reversalOf ? { reversalOf: e.reversalOf } : {}),
+            ...(e.receipt?.id ? { receipt: { id: e.receipt.id, name: e.receipt.name } } : {}),
+          })),
+        },
+        retentionUntil: retentionDate(now),
       });
+      // The open period this closing covers is closed with it; then exactly one next period opens as a draft.
+      for (const x of s.periods)
+        if (x.status === "draft" && overlaps(x, p))
+          Object.assign(x, { status: "closed", closingId: id, closedAt: now });
+      const next = nextPeriodRange(p.end);
+      if (!currentPeriod(s) && !s.closings.some((c) => overlaps(c, next))) {
+        s.periods.unshift({
+          id: uid(),
+          name: periodName(next.start, next.end),
+          ...next,
+          status: "draft",
+          createdAt: now,
+          createdBy: actorId,
+          previousClosingId: id,
+        });
+      }
       detail = `${p.start} to ${p.end}`;
+      break;
+    }
+    case "periodCreate": {
+      assert(admin, "Admin permission required.");
+      assert(!currentPeriod(s), "A period is already open. Change its dates, or close it first.");
+      const period = cleanPeriod(p, s.closings);
+      s.periods ??= [];
+      s.periods.unshift({ id: uid(), ...period, status: "draft", createdAt: now, createdBy: actorId });
+      detail = `${period.name} (${period.start} to ${period.end})`;
+      break;
+    }
+    case "periodUpdate": {
+      assert(admin, "Admin permission required.");
+      const period = (s.periods || []).find((x) => x.id === p.id);
+      assert(period?.status === "draft", "Only the open period can be changed.");
+      Object.assign(period, cleanPeriod(p, s.closings), { updatedAt: now, updatedBy: actorId });
+      detail = `${period.name} (${period.start} to ${period.end})`;
       break;
     }
     case "payment": {

@@ -1,4 +1,4 @@
-# SplitWisee v1.3.0
+# CoinSplit v1.4.0
 
 Shared household expenses for flats, houses, families and hostels: receipt scanning, exact-pence splits, monthly
 closings, member-to-member repayment tracking, bookkeeping, referrals and a £0.99/month subscription, plus a separate
@@ -12,6 +12,56 @@ The project is two independent packages:
 | [`frontend/`](frontend) | React 19, Redux Toolkit, Vite 8, Tesseract.js + PDF.js (in-browser OCR), jsPDF | `npm run dev` → <http://localhost:5173> | static files from `npm run build` |
 
 There is no demo mode, seed data or sample household: every record comes from real sign-ups through the API.
+
+## Update Round 02 (v1.4.0)
+
+The twelve handwritten updates from the *Coin Split Update Round 02* developer handover (11 November 2026), plus the
+rename to **CoinSplit** with the new logo.
+
+| # | Request | What was built | Where | Tests |
+|---|---|---|---|---|
+| 01 | Add new room | Prominent **Add new room** for the owner (and admins, as before); unique trimmed names; reachable on phones | Household | `coinsplit.test.jsx`, `e2e-households` |
+| 02 | Superadmin statistics | **Statistics**: active users/households, pending payments, coupon/referral/offer claims, invitations, payments, monthly trends; date filter, Refresh, timestamps; aggregates only | `/admin/` › Statistics | `v14-coinsplit` (stats), `coinsplit.test.jsx` |
+| 03 | Next settlement period | Closing locks the period and opens exactly one next period (next calendar month, February/leap aware); confirm or change name/dates; idempotent; no overlap | Settlements › Start new settlement | `v14-coinsplit` (periods) |
+| 04 | Previous closing sheets | **Settlement history** (newest first, status/year filters) and frozen **closing sheets** with PDF/CSV/JSON | Reports, Settlements | `v14-coinsplit`, `coinsplit.test.jsx` |
+| 05 | Receipts kept one more month | Original files kept until **one month after the period locks**; date shown on receipts and sheets; removal only after the owner approves the policy; legal hold; record kept; 410 after removal | Receipt details, `/admin/` › Receipts | `v14-coinsplit` (retention) |
+| 06 | Christmas 100% off | Website ribbon from 1 Nov; **1 free month (£0)** claimable 1–31 Dec 2026; max 1,000; one per account; not stacked with a running free month; owner can edit/switch off | Website header, pricing, Invite & earn, `/admin/` › Campaigns | `v14-coinsplit` (promotion) |
+| 07 | Professional downloads | PDFs with logo, document name, household, date range, export time, page numbers, privacy footer; JSON alongside PDF/CSV; descriptive file names | Reports, Settlements, receipts, bookkeeping, admin | `coinsplit.test.jsx` |
+| 08 | Audit invitation & referral links | Single-use, recipient-bound, 7-day links with specific recovery messages; atomic join; invitation vs referral labelled; invitation audit trail | Invite member, sign-up, `/admin/` › Referrals | `v14-coinsplit` (invitations) |
+| 09 | 25% to charity | “25% of our net profit from CoinSplit subscriptions”, versioned; **publishes only once a charity is named**; pledge calculator from the accounts | Website › Giving back, `/admin/` › Campaigns | `v14-coinsplit` (charity) |
+| 10 | Household on mobile | Phone bar: Home, Expenses, Add, Settle, **Household**, **More** (every section); checked at 320/375/430 px, light and dark | Mobile | `coinsplit.test.jsx`, browser run |
+| 11 | Page micro-animations | 200 ms section/dialog entrance, 140 ms dialog exit; transform/opacity only; off with reduced motion | Everywhere | browser run |
+| 12 | Settlement page actions | On Settlements the top shows only **Start new settlement** (owner/admin); members see none; other tabs keep Add expense / Invite member | Settlements | `coinsplit.test.jsx` |
+
+**Decisions taken** (from the handover’s “decisions to confirm”, answered by the product owner where marked):
+
+- Brand (DEC-01, owner): **CoinSplit**; the supplied KS artwork redrawn with a C as a transparent vector logo
+  (`frontend/public/brand/`). Internal identifiers stay unchanged: database name, cookies, stored preferences and the
+  `splitwisee-*-v1` export schemas of earlier versions.
+- Receipts (DEC-02): the extra month counts from the date the period is locked. Nothing is ever deleted until the owner
+  approves the policy in the control centre; households on legal hold are skipped.
+- Promotion (DEC-03, owner): 1 free month, claims 1–31 December 2026, up to 1,000, one per account, not combined with a
+  free month already running.
+- Charity (DEC-04, owner): 25% of net profit from subscriptions, each calendar year; hidden until a charity is named.
+- Periods (DEC-05): the next period is created automatically and the owner confirms or edits it; UK dates.
+- Statistics (DEC-06): aggregates only; no household or personal records in statistics.
+- Rooms (DEC-07) and exports (DEC-08): unchanged from v1.3.0 (owners and admins manage rooms; members export their
+  household’s sheets).
+
+**Data and API changes** (additive; no migration script is needed):
+
+- Households gain `periods` (the open period is `status: "draft"`) and closings gain `name`, `summary` (frozen totals
+  and expense rows) and `retentionUntil`. Older closings keep working; their sheets are read from the locked expenses.
+- New collections `promotionRedemptions` and `invitationEvents` (validators and indexes are created on start-up).
+- New actions `periodCreate` and `periodUpdate`; new routes are listed in the API table below.
+- New referral codes start with `CS-`; existing `SW-` codes keep working.
+- Rollback: deploy v1.3.0 again. The extra fields and collections are ignored by v1.3.0; any receipt files removed
+  under an approved retention policy stay removed.
+
+**Superadmin access:** sign in, copy your account ID from Account & settings, run
+`npm run operator:secret -- <account id>` in `backend/`, set the printed `SUPERADMIN_USER_ID` and
+`OPERATOR_TOTP_SECRETS` on the API host (Vercel: project environment variables) and redeploy, then open `/admin/`
+and enter the code from your authenticator app.
 
 ## Quick start
 
@@ -100,6 +150,7 @@ key; on a conflict it reloads the latest household.
 | backend | `npm run db:init` | apply validators and indexes only |
 | backend | `npm run preflight` | production configuration checklist (`--json`, `--output file`) |
 | backend | `npm run routes` | list registered routes |
+| backend | `npm run operator:secret -- <user id>` | create the superadmin authenticator key and the two variables to set |
 | both | `npm run lint` / `npm run format` | ESLint 10 / Prettier |
 | frontend | `npm run dev` | Vite dev server with `/api` proxy |
 | frontend | `npm run build` | production build into `frontend/dist` |
@@ -129,6 +180,8 @@ Access: **P** public · **S** signed-in session · **M** active household member
 | `GET /api/health` | P | api | Liveness + database ping (`503` when the DB is down) |
 | `GET /api/v1/public/config` | P | api | Configured providers, price, version |
 | `GET /api/v1/public/settings` | P | api | Allowlisted website copy and announcements |
+| `GET /api/v1/public/promotion` | P | api | Scheduled offer banner (Christmas: 1 free month, claims 1–31 Dec) |
+| `GET /api/v1/public/charity` | P | api | Published charity commitment (hidden until a charity is named) |
 | `POST /api/v1/auth/register` | P | register | Password sign-up (generic 202; ≤3 emails/hour/address) |
 | `POST /api/v1/auth/verify` | P | verify | Confirm email verification code |
 | `POST /api/v1/auth/resend` | P | resend | Resend verification code (generic 202) |
@@ -148,13 +201,15 @@ Access: **P** public · **S** signed-in session · **M** active household member
 | `POST /api/v1/households/:id/invites` | M | api | Recipient-bound 7-day invitation |
 | `POST /api/v1/invites/accept` | S | api | Accept invitation as the intended identity |
 | `POST /api/v1/households/:id/receipts` | M $ | upload | Upload original receipt (JPEG/PNG/WebP/PDF ≤12 MB) |
-| `GET /api/v1/households/:id/receipts/:receiptId` | M | api | Private download / inline view |
+| `GET /api/v1/households/:id/receipts/:receiptId` | M | api | Private download / inline view (410 after the original is removed) |
+| `GET /api/v1/households/:id/receipts` | M | api | Receipt records with retention dates (original kept until 1 month after the period locks) |
 | `GET /api/v1/account/profile` | S | api | Own profile |
 | `POST /api/v1/account/profile` | S | api | Update own profile (no identity/role fields) |
 | `GET /api/v1/account/export` | S | api | Personal data export |
 | `GET /api/v1/account/access` | S | api | Plan / free access state |
 | `GET /api/v1/account/rewards` | S | api | Referral code, link, earned months |
 | `POST /api/v1/account/coupon` | S | api | Redeem one welcome coupon (transaction) |
+| `POST /api/v1/account/promotion` | S | api | Claim the running offer (£0 month; one per account; no stacking) |
 | `GET /api/v1/account/bank` | S | api | Masked payee details |
 | `POST /api/v1/account/bank` | S | api | Save encrypted payee details |
 | `POST /api/v1/account/bank/remove` | S | api | Remove payee details |
@@ -179,6 +234,13 @@ Access: **P** public · **S** signed-in session · **M** active household member
 | `POST /api/v1/operator/finance/entries/void` | O | operator | Void an entry (kept) |
 | `POST /api/v1/operator/finance/payout` | O | operator | Stripe payout to merchant default bank |
 | `GET /api/v1/operator/accounting` | O | operator | Monthly accountant report (`?month=YYYY-MM`) |
+| `GET /api/v1/operator/stats` | O | operator | Aggregate platform statistics and monthly trends (`?from&to`) |
+| `GET /api/v1/operator/content` | O | operator | Promotion, charity and retention settings |
+| `POST /api/v1/operator/promotion` | O | operator | Schedule, edit or switch off the website offer |
+| `POST /api/v1/operator/charity` | O | operator | Save or publish the versioned charity commitment |
+| `POST /api/v1/operator/retention` | O | operator | Approve or withdraw the receipt retention policy |
+| `POST /api/v1/operator/retention/hold` | O | operator | Place or lift a household legal hold |
+| `POST /api/v1/operator/retention/run` | O | operator | Remove original receipt files past their retention date |
 
 Every operator mutation requires an audit `reason` and is recorded. Household action types and their permissions are listed in [API_REFERENCE.md §3](backend/docs/API_REFERENCE.md#3-household-action-dispatcher--post-apiv1householdsidactions).
 

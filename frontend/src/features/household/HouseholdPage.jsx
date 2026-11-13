@@ -165,29 +165,51 @@ export function HouseholdPage() {
 
   return (
     <>
+      {admin && (
+        <Button full icon="plus" className="add-room-cta" onClick={() => open("roomCreate", { name: "" })}>
+          Add new room
+        </Button>
+      )}
+      {edit && <HouseholdEditor key={edit.key} edit={edit} rooms={rooms} onClose={() => setEdit(null)} />}
+
+      <div className="household-summary">
+        <section className="card">
+          <small>Household</small>
+          <strong>{household.name}</strong>
+          <small>
+            {household.type ? `${household.type[0].toUpperCase()}${household.type.slice(1)} · ` : ""}
+            your role: {me?.role}
+          </small>
+        </section>
+        <section className="card">
+          <small>Active rooms</small>
+          <strong>{rooms.length}</strong>
+          <small>Rooms are managed by owners and admins</small>
+        </section>
+        <section className="card">
+          <small>Residents</small>
+          <strong>{active.length}</strong>
+          <small>
+            {active.length} active household {active.length === 1 ? "member" : "members"}
+          </small>
+        </section>
+      </div>
+
       <div className="section-heading wrap">
-        <div>
-          <h2>{household.name}</h2>
-          <p>
-            {active.length} active {active.length === 1 ? "member" : "members"} · {rooms.length}{" "}
-            {rooms.length === 1 ? "room" : "rooms"}
-          </p>
-        </div>
+        <h2>Rooms and members</h2>
         <div className="actions wrap">
-          <Button onClick={() => dispatch(dialogOpened("invite"))}>Invite member</Button>
           {admin && (
-            <Button variant="outline" onClick={() => open("roomCreate", { name: "" })}>
-              Add room
-            </Button>
+            <span className="pill mint">{me.role === "owner" ? "Owner" : "Admin"} access enabled</span>
           )}
+          <Button variant="outline" onClick={() => dispatch(dialogOpened("invite"))}>
+            Invite member
+          </Button>
         </div>
       </div>
       <p className="caption">
         Everyone can invite a housemate. Owners and admins manage rooms and members. Household roles never
         give platform operator access.
       </p>
-
-      {edit && <HouseholdEditor key={edit.key} edit={edit} rooms={rooms} onClose={() => setEdit(null)} />}
 
       <div className="room-grid">
         {rooms.map((room) => {

@@ -5,7 +5,7 @@ import { toastShown } from "../../app/uiSlice.js";
 import { Avatar } from "../../components/Avatar.jsx";
 import { Button } from "../../components/Button.jsx";
 import { Field } from "../../components/Field.jsx";
-import { saveBlob, shareBlob } from "../../utils/downloads.js";
+import { exportFilename, saveBlob, shareBlob } from "../../utils/downloads.js";
 import {
   EXPENSE_CATEGORIES,
   firstDayOfMonth,
@@ -14,7 +14,8 @@ import {
   todayIso,
 } from "../../utils/format.js";
 import { selectHousehold, selectMemberName } from "../household/householdSlice.js";
-import { expensesCsv, statementPdf } from "./householdStatement.js";
+import { expensesCsv, statementJson, statementPdf } from "./householdStatement.js";
+import { SettlementHistory } from "./SettlementHistory.jsx";
 
 export function ReportsPage() {
   const dispatch = useDispatch();
@@ -23,6 +24,8 @@ export function ReportsPage() {
   const [period, setPeriod] = useState({ start: firstDayOfMonth(), end: todayIso() });
   const [exporting, setExporting] = useState(false);
   const { start, end } = period;
+  const filename = (document, ext) =>
+    exportFilename({ household: household.name, document, start, end, ext });
 
   const byCategory = useMemo(() => {
     const approved = household.expenses.filter(
@@ -44,7 +47,7 @@ export function ReportsPage() {
     try {
       await shareBlob(
         await statementPdf(household, start, end),
-        `SplitWisee-statement-${start}-to-${end}.pdf`,
+        filename("Statement", "pdf"),
         "Household statement",
       );
     } catch (failure) {
@@ -57,6 +60,13 @@ export function ReportsPage() {
 
   return (
     <>
+      <SettlementHistory />
+      <div className="section-heading report-analysis">
+        <div>
+          <span className="eyebrow">REPORTS / SPENDING ANALYSIS</span>
+          <h2>Spending in any date range</h2>
+        </div>
+      </div>
       <div className="card row wrap date-filter">
         <Field label="From">
           <input
@@ -78,13 +88,16 @@ export function ReportsPage() {
           variant="outline"
           icon="download"
           onClick={() =>
-            saveBlob(
-              expensesCsv(household, start, end, memberName),
-              `SplitWisee-expenses-${start}-to-${end}.csv`,
-            )
+            saveBlob(expensesCsv(household, start, end, memberName), filename("Expenses", "csv"))
           }
         >
           CSV
+        </Button>
+        <Button
+          variant="outline"
+          onClick={() => saveBlob(statementJson(household, start, end), filename("Statement", "json"))}
+        >
+          JSON
         </Button>
         <Button icon="share" disabled={exporting} onClick={exportPdf}>
           {exporting ? "Preparing…" : "Statement PDF"}

@@ -184,6 +184,7 @@ function installPlatform(
     limiters,
     quota,
     throttle,
+    receiptDir,
   },
 ) {
   const limit = (name) => limiters?.[name] || ((_req, _res, next) => next());
@@ -226,6 +227,8 @@ function installPlatform(
           : "access",
       status: "qualified",
       amountPence: 99,
+      // A household invitation also counts as a referral; the label keeps the two apart in the audit.
+      via: u.referredVia === "invitation" ? "invitation" : "referral-link",
     };
     try {
       await rewards.insertOne(event);
@@ -394,7 +397,7 @@ function installPlatform(
           createdAt: /* @__PURE__ */ new Date(),
           verifiedAt: /* @__PURE__ */ new Date(),
           referredBy: t.referredBy,
-          referralCode: "SW-" + crypto.randomBytes(6).toString("hex").toUpperCase(),
+          referralCode: "CS-" + crypto.randomBytes(6).toString("hex").toUpperCase(),
         };
         try {
           await users.insertOne(u);
@@ -497,7 +500,7 @@ function installPlatform(
               verifiedAt: /* @__PURE__ */ new Date(),
               createdAt: /* @__PURE__ */ new Date(),
               referredBy: t.referredBy,
-              referralCode: "SW-" + crypto.randomBytes(6).toString("hex").toUpperCase(),
+              referralCode: "CS-" + crypto.randomBytes(6).toString("hex").toUpperCase(),
             };
             await users.insertOne(u);
           }
@@ -520,7 +523,7 @@ function installPlatform(
     endpoint(async (req, res) => {
       let u = req.user;
       if (!u.referralCode) {
-        const code = "SW-" + crypto.randomBytes(6).toString("hex").toUpperCase();
+        const code = "CS-" + crypto.randomBytes(6).toString("hex").toUpperCase();
         await users.updateOne(
           { id: u.id, referralCode: { $exists: false } },
           { $set: { referralCode: code } },
@@ -742,7 +745,18 @@ function installPlatform(
       res.json({ ok: true });
     }),
   );
-  installAdmin(app, { db, session, operator, unlocked, endpoint, stripe, encryptBank });
+  installAdmin(app, {
+    db,
+    session,
+    operator,
+    unlocked,
+    endpoint,
+    stripe,
+    encryptBank,
+    receiptDir,
+    rewardWindow,
+    accessEvents,
+  });
   app.get(
     "/api/v1/operator/overview",
     session,
@@ -885,7 +899,7 @@ async function syncInvoiceCredits(db, stripe, u) {
         {
           amount: -99,
           currency: "gbp",
-          description: "SplitWisee referral: one monthly fee",
+          description: "CoinSplit referral: one monthly fee",
           metadata: { referralId: e.id },
         },
         { idempotencyKey: e.id },

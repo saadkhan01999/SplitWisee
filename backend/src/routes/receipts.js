@@ -2,6 +2,7 @@ import express from "express";
 import fs from "node:fs/promises";
 import path from "node:path";
 import { uid } from "../modules/calculation-engine/index.js";
+import { retentionByReceipt } from "../services/retention.js";
 const fail = (message, status = 400) => {
   throw Object.assign(new Error(message), { status });
 };
@@ -65,6 +66,27 @@ export function installReceipts(
         .json({ id, name, mime, bytes: bytes.length, checksum: hash(bytes), scanStatus: "client-review" });
     }),
   );
+  // Receipt records with their retention dates: the original file is kept until one month after its period locks.
+  app.get(
+    "/api/v1/households/:id/receipts",
+    session,
+    endpoint(async (req, res) => {
+      const household = await load(req);
+      const until = retentionByReceipt(household);
+      const list = await receipts
+        .find(
+          { householdId: household.id },
+          { projection: { _id: 0, id: 1, name: 1, mime: 1, bytes: 1, createdAt: 1, purgedAt: 1 } },
+        )
+        .sort({ createdAt: -1 })
+        .limit(2000)
+        .toArray();
+      res.json({
+        legalHold: !!household.legalHold?.active,
+        receipts: list.map((r) => ({ ...r, retentionUntil: until.get(r.id) ?? null })),
+      });
+    }),
+  );
   app.get(
     "/api/v1/households/:id/receipts/:receiptId",
     session,
@@ -75,6 +97,11 @@ export function installReceipts(
         householdId: String(req.params.id),
       });
       if (!r) fail("Receipt not found.", 404);
+      if (r.purgedAt)
+        fail(
+          `The original file was removed on ${new Date(r.purgedAt).toISOString().slice(0, 10)} under the receipt retention policy. The expense, its receipt details and the closing sheet are kept.`,
+          410,
+        );
       res.set({
         "Content-Type": r.mime,
         "Content-Disposition": `${req.query.inline === "1" ? "inline" : "attachment"}; filename="${r.name}"`,

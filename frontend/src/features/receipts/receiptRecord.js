@@ -62,7 +62,11 @@ export function receiptJson(expense, household) {
 }
 
 export async function receiptPdf(expense, household, memberName) {
-  const report = await PdfReport.create({ label: "EXPENSE RECORD" });
+  const report = await PdfReport.create({
+    label: "EXPENSE RECORD",
+    household: household.name,
+    range: formatLongDate(expense.date),
+  });
   const people = receiptPeople(expense, memberName);
   const total = (rows) => formatMoney(rows.reduce((sum, row) => sum + row.amountPence, 0));
 

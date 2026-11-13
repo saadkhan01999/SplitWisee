@@ -4,6 +4,7 @@ import { Avatar } from "../../components/Avatar.jsx";
 import { Icon } from "../../components/Icon.jsx";
 import { Logo } from "../../components/Logo.jsx";
 import { selectCurrentMember, selectHousehold } from "../household/householdSlice.js";
+import { selectUser } from "../session/sessionSlice.js";
 import { TABS } from "./tabs.js";
 
 export function Sidebar() {
@@ -11,6 +12,7 @@ export function Sidebar() {
   const { tab } = useSelector(selectRoute);
   const household = useSelector(selectHousehold);
   const member = useSelector(selectCurrentMember);
+  const user = useSelector(selectUser);
 
   return (
     <aside className="sidebar">
@@ -30,6 +32,12 @@ export function Sidebar() {
             {id === "expenses" && <span className="nav-count">{household.expenses.length}</span>}
           </button>
         ))}
+        {user?.operator && (
+          <a className="sidebar-admin" href="/admin/">
+            <Icon name="shield" />
+            Superadmin
+          </a>
+        )}
       </nav>
       <div className="sidebar-note">
         <Icon name="leaf" />

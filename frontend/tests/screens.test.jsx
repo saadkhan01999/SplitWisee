@@ -119,8 +119,10 @@ describe("settlements", () => {
 
   it("previews a closing with exact transfers before locking it", async () => {
     const { user: person } = renderApp({ tab: "settle" });
-    await person.click(screen.getByRole("button", { name: "Close a period" }));
-    const dialog = await screen.findByRole("dialog", { name: "Close a period" });
+    await person.click(screen.getAllByRole("button", { name: "Start new settlement" })[0]);
+    const start = await screen.findByRole("dialog", { name: "Start new settlement" });
+    await person.click(within(start).getByRole("button", { name: "Close a custom date range instead" }));
+    const dialog = await screen.findByRole("dialog", { name: "Start new settlement" });
     fireEvent.change(within(dialog).getByLabelText("From"), { target: { value: "2026-09-01" } });
     fireEvent.change(within(dialog).getByLabelText("To"), { target: { value: "2026-09-30" } });
     // £90 paid by Amira and £24 by Ben, each shared by three: Amira +£52, Ben −£14, Chloe −£38.
@@ -134,14 +136,14 @@ describe("settlements", () => {
 describe("household roles", () => {
   it("gives owners room and member management", () => {
     renderApp({ tab: "people" });
-    expect(screen.getByRole("button", { name: "Add room" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Add new room" })).toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: "Change role" })).toHaveLength(2);
   });
 
   it("lets ordinary members invite but not manage", () => {
     renderApp({ tab: "people", signedInAs: { ...user, id: "u-member", name: "Chloe Diaz" } });
     expect(screen.getAllByRole("button", { name: "Invite member" }).length).toBeGreaterThan(0);
-    expect(screen.queryByRole("button", { name: "Add room" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Add new room" })).not.toBeInTheDocument();
     expect(screen.queryByRole("button", { name: "Change role" })).not.toBeInTheDocument();
   });
 

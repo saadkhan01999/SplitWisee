@@ -17,6 +17,7 @@
   --mint: #e9f5ef;
   --soft: #f6f8f5;
   --orange: #a16c39;
+  --logo: #12462c;
 }
 * {
   box-sizing: border-box;
@@ -1183,6 +1184,7 @@ hr {
   --mint: #274b3c;
   --soft: #243c30;
   --orange: #efbd85;
+  --logo: #e9f5ef;
   background: var(--bg);
   color: var(--text);
 }
@@ -4015,4 +4017,430 @@ code {
   font-weight: 700;
   letter-spacing: 0.04em;
   user-select: all;
+}
+
+/* v1.4.0 CoinSplit brand: transparent vector logo coloured by --logo */
+.brand {
+  color: var(--logo);
+}
+.brand > div {
+  display: grid;
+  gap: 4px;
+  justify-items: start;
+}
+.brand-wordmark {
+  display: block;
+  height: 1em;
+  width: auto;
+}
+.brand small {
+  display: block;
+  margin-top: 0;
+  white-space: nowrap;
+}
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* v1.4.0 Update Round 02 */
+
+/* Subtle motion: a 200 ms entrance on every section change and dialog, a 140 ms dialog exit. Transform and opacity
+   only, so nothing reflows; the reduced-motion rule above turns all of it off. */
+.page-transition {
+  animation: page-in 0.2s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.overlay {
+  animation: overlay-in 0.16s ease-out both;
+}
+.overlay .modal {
+  animation: modal-in 0.2s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+.overlay.closing {
+  animation: overlay-out 0.14s ease-in both;
+}
+.overlay.closing .modal {
+  animation: modal-out 0.14s ease-in both;
+}
+@keyframes overlay-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes overlay-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.985);
+  }
+}
+@keyframes modal-out {
+  to {
+    opacity: 0;
+    transform: translateY(6px) scale(0.99);
+  }
+}
+
+/* Phone navigation: six evenly sized items fit from 320 px. */
+.bottom-nav button {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.bottom-nav button:not(.add-nav) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.sections-menu {
+  display: grid;
+  gap: 8px;
+}
+.sections-menu > button,
+.sections-menu > a {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  text-align: left;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text);
+  text-decoration: none;
+  min-height: 52px;
+}
+.sections-menu > .active {
+  border-color: var(--green);
+  background: var(--mint);
+}
+.sections-menu svg {
+  flex: none;
+  color: var(--green);
+}
+.sections-menu strong,
+.sections-menu small {
+  display: block;
+}
+.sections-menu small {
+  color: var(--muted);
+  margin-top: 2px;
+}
+.sidebar-admin {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  color: inherit;
+  text-decoration: none;
+  font-size: calc(13px * var(--font-scale, 1));
+}
+.profile-popover a {
+  display: block;
+  padding: 10px 12px;
+  color: var(--text);
+  text-decoration: none;
+}
+
+/* Settlements */
+.pill.warning {
+  background: #fdf0e3;
+  color: #9a5b1c;
+}
+[data-theme="dark"] .pill.warning {
+  background: #4a3721;
+  color: #f2c48f;
+}
+.period-overview,
+.household-summary,
+.history-stats,
+.sheet-stats,
+.closing-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-bottom: 22px;
+}
+.period-overview > .card,
+.household-summary > .card,
+.history-stats > .card {
+  display: grid;
+  gap: 6px;
+  align-content: start;
+  margin: 0;
+}
+.period-overview strong,
+.household-summary strong,
+.history-stats strong {
+  font-size: calc(24px * var(--font-scale, 1));
+  letter-spacing: -0.5px;
+  overflow-wrap: anywhere;
+}
+.period-overview small,
+.household-summary small,
+.history-stats small,
+.closing-stats small,
+.sheet-stats small {
+  color: var(--muted);
+}
+.period-card {
+  background: var(--green) !important;
+  border-color: var(--green) !important;
+  color: #fff;
+}
+.period-card small,
+.period-card .eyebrow {
+  color: #d9f1e7 !important;
+}
+.closing.card {
+  margin-bottom: 16px;
+}
+.closing h3 {
+  margin: 0 0 4px;
+}
+.closing > .row small {
+  color: var(--muted);
+}
+.closing-stats,
+.sheet-stats {
+  margin: 16px 0;
+  gap: 10px;
+}
+.closing-stats > div,
+.sheet-stats > div {
+  display: grid;
+  gap: 4px;
+}
+.closing-stats strong,
+.sheet-stats strong {
+  font-size: calc(16px * var(--font-scale, 1));
+}
+.closing-sheet h3 {
+  margin: 22px 0 8px;
+}
+.closing-sheet-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+}
+.closing-sheet-head p {
+  margin: 4px 0 0;
+}
+.period-summary {
+  display: grid;
+  gap: 4px;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--mint);
+  margin-bottom: 14px;
+}
+.period-summary strong {
+  font-size: calc(20px * var(--font-scale, 1));
+}
+.period-summary small {
+  color: var(--muted);
+}
+.start-settlement,
+.next-period,
+.period-form {
+  display: grid;
+  gap: 12px;
+}
+.next-period h3 {
+  margin: 6px 0 0;
+}
+
+/* Reports > Settlement history */
+.settlement-history {
+  margin-bottom: 34px;
+}
+.settlement-history select {
+  min-height: 38px;
+}
+.history-table td:first-child {
+  min-width: 170px;
+}
+.history-table .actions {
+  justify-content: flex-end;
+  flex-wrap: nowrap;
+}
+.report-analysis {
+  margin-top: 10px;
+}
+
+/* Household */
+.add-room-cta {
+  margin-bottom: 18px;
+  min-height: 48px;
+}
+.household-editor {
+  margin-bottom: 18px;
+}
+
+/* Receipts */
+.retention-note {
+  font-size: calc(12px * var(--font-scale, 1));
+  background: var(--mint);
+  color: var(--green);
+  border-radius: 9px;
+  padding: 10px 12px;
+}
+.retention-note.removed {
+  background: #fdf0e3;
+  color: #9a5b1c;
+}
+
+/* Website campaigns */
+.promo-ribbon {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 6%;
+  background: var(--mint);
+  color: var(--green);
+  font-size: calc(13px * var(--font-scale, 1));
+  flex-wrap: wrap;
+}
+.promo-ribbon > span {
+  flex: 1 1 260px;
+}
+.promo-ribbon .btn {
+  padding: 7px 12px;
+}
+.shell .promo-ribbon {
+  border-radius: 12px;
+  margin-bottom: 18px;
+  padding: 12px 16px;
+}
+.price-offer {
+  background: var(--mint);
+  color: var(--green);
+  font-weight: 600;
+  border-radius: 9px;
+  padding: 10px 12px;
+  margin: 0 0 14px;
+}
+.charity-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 30px;
+  align-items: start;
+}
+.charity-statement {
+  font-size: calc(18px * var(--font-scale, 1));
+  line-height: 1.5;
+}
+.charity-section .card > svg {
+  color: var(--green);
+}
+.charity-section dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.charity-section dt {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+.charity-section dd {
+  margin: 4px 0 0;
+  font-weight: 600;
+}
+.promotion-claim {
+  margin-bottom: 22px;
+  border-color: var(--green) !important;
+}
+.promotion-claim h2 {
+  margin: 4px 0 0;
+}
+.promotion-claim .row > svg {
+  color: var(--green);
+}
+.price-zero {
+  font-size: calc(26px * var(--font-scale, 1));
+  font-weight: 700;
+  color: var(--green);
+}
+
+/* Control centre */
+.platform-stats .stats-filter {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.platform-stats .stats-filter form {
+  align-items: flex-end;
+  justify-content: flex-start;
+}
+.admin-metric small {
+  display: block;
+  color: var(--muted);
+  margin-top: 6px;
+  font-size: 0.72rem;
+}
+.content-panels {
+  display: grid;
+  gap: 20px;
+}
+.content-panels .admin-editor {
+  margin-top: 0;
+  display: grid;
+  gap: 10px;
+}
+.pledge-calculator {
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  margin-top: 6px;
+}
+.pledge-calculator .row {
+  justify-content: flex-start;
+  align-items: flex-end;
+}
+
+@media (max-width: 760px) {
+  .period-overview,
+  .household-summary,
+  .history-stats,
+  .charity-section {
+    grid-template-columns: 1fr;
+  }
+  .closing-stats,
+  .sheet-stats {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .history-table .actions {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+}
+@media (max-width: 380px) {
+  .closing-stats,
+  .sheet-stats {
+    grid-template-columns: 1fr 1fr;
+  }
+  .charity-section dl {
+    grid-template-columns: 1fr;
+  }
 }

@@ -6,18 +6,23 @@ import { brand } from "../../../src/config/brand.js";
 import { formatMoney } from "../../../src/utils/format.js";
 import { AdminIcon } from "../components/AdminIcon.jsx";
 import { loadOverview, selectOperator } from "../operatorSlice.js";
+import { CampaignsPanel, RetentionPanel } from "./ContentPanels.jsx";
 import { FinancePanel } from "./FinancePanel.jsx";
 import { OperatorEditor } from "./OperatorEditor.jsx";
 import { OverviewSection } from "./OverviewSection.jsx";
+import { PlatformStats } from "./PlatformStats.jsx";
 import { hasRecordsSection, RecordsSection } from "./RecordsSection.jsx";
 
 const GROUPS = [
-  ["Workspace", ["Overview", "Users", "Households"]],
+  ["Workspace", ["Overview", "Statistics", "Users", "Households"]],
   ["Billing & growth", ["Payments", "Referrals", "Coupons", "Retention"]],
-  ["Management", ["Website", "Support", "Accounting", "Audit"]],
+  ["Management", ["Website", "Campaigns", "Receipts", "Support", "Accounting", "Audit"]],
 ];
 const ICONS = {
   Overview: "grid",
+  Statistics: "chart",
+  Campaigns: "tag",
+  Receipts: "shield",
   Users: "users",
   Households: "home",
   Payments: "wallet",
@@ -181,8 +186,10 @@ export function AdminDashboard() {
               <h1>{section === "Overview" ? "Dashboard" : section}</h1>
               <p>
                 {section === "Overview"
-                  ? "What’s happening across SplitWisee."
-                  : "Every change is permission-checked and recorded in the audit log."}
+                  ? "What’s happening across CoinSplit."
+                  : section === "Statistics"
+                    ? "Live aggregate statistics. No household’s personal records are shown."
+                    : "Every change is permission-checked and recorded in the audit log."}
               </p>
             </div>
             <div className="actions wrap">
@@ -219,6 +226,9 @@ export function AdminDashboard() {
             <FinancePanel accounting={section === "Accounting"} />
           )}
           {section === "Website" && <WebsiteSection data={data} onEdit={() => edit("website")} />}
+          {section === "Statistics" && <PlatformStats />}
+          {section === "Campaigns" && <CampaignsPanel />}
+          {section === "Receipts" && <RetentionPanel households={data.households} />}
           {hasRecordsSection(section) && (
             <RecordsSection
               section={section}
@@ -234,7 +244,10 @@ export function AdminDashboard() {
                 ) : section === "Referrals" ? (
                   <p className="notice">
                     A new verified user gets one welcome month with a valid referral or invitation, and the
-                    referrer earns one month. Repeat sign-ins never create new rewards.
+                    referrer earns one month. Each event shows whether it came from a referral link or a
+                    household invitation (“via”). Repeat sign-ins, self-referrals and second claims never
+                    create rewards; invitation links are single-use, bound to one recipient and expire after 7
+                    days.
                   </p>
                 ) : null
               }

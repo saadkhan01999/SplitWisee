@@ -1,30 +1,27 @@
 import { brand } from "../config/brand.js";
+import { MARK_PATH, MARK_VIEWBOX, WORDMARK_PATH, WORDMARK_VIEWBOX } from "./logoPaths.js";
 
-export function BrandMark() {
+// The CoinSplit logo as inline vectors: transparent, sharp at every size and coloured by CSS (`--logo`), so it suits
+// light and dark themes. The same artwork is published as files in public/brand/.
+
+export function BrandMark({ className = "brand-symbol" }) {
   return (
-    <svg className="brand-symbol" aria-hidden="true" viewBox="0 0 48 48">
-      <rect width="48" height="48" rx="14" fill="#087F68" />
-      <path d="M12 22 24 12l12 10v13H12Z" fill="none" stroke="#fff" strokeWidth="3" strokeLinejoin="round" />
-      <circle cx="19" cy="24" r="2.5" fill="#ADF3D2" />
-      <circle cx="29" cy="24" r="2.5" fill="#ADF3D2" />
-      <path
-        d="M15.5 32v-1a3.5 3.5 0 0 1 7 0v1m3 0v-1a3.5 3.5 0 0 1 7 0v1"
-        fill="none"
-        stroke="#ADF3D2"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-      />
+    <svg className={className} viewBox={MARK_VIEWBOX} aria-hidden="true" focusable="false">
+      <path d={MARK_PATH} fill="currentColor" />
     </svg>
   );
 }
 
-export function Logo() {
+export function Logo({ tagline = true }) {
   return (
     <div className="brand">
       <BrandMark />
       <div>
-        {brand.name}
-        <small>{brand.tagline.toUpperCase()}</small>
+        <svg className="brand-wordmark" viewBox={WORDMARK_VIEWBOX} aria-hidden="true" focusable="false">
+          <path d={WORDMARK_PATH} fill="currentColor" />
+        </svg>
+        <span className="visually-hidden">{brand.name}</span>
+        {tagline && <small>{brand.tagline.toUpperCase()}</small>}
       </div>
     </div>
   );
