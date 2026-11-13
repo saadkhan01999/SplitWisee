@@ -43,7 +43,7 @@ const DIALOGS = {
   activity: { title: "Household activity", component: ActivityPanel },
   invite: { title: "Invite a housemate", component: InviteMemberForm },
   "household-new": { title: "Create or join a household", component: NewHouseholdForm },
-  install: { title: "CoinSplit on your phone", component: InstallGuide },
+  install: { title: "KoinSplit on your phone", component: InstallGuide },
   support: { title: "Contact support", component: SupportRequestForm },
 };
 

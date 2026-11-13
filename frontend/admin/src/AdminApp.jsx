@@ -42,7 +42,7 @@ function OperatorSignIn() {
       </header>
       <div className="auth-layout">
         <aside className="auth-intro">
-          <span className="eyebrow">COINSPLIT CONTROL CENTRE</span>
+          <span className="eyebrow">KOINSPLIT CONTROL CENTRE</span>
           <h2>
             One owner.
             <br />A clear view of everything.
@@ -147,7 +147,7 @@ export function AdminApp() {
   else if (session.status === "unavailable")
     content = (
       <StatusScreen
-        title="CoinSplit is unreachable"
+        title="KoinSplit is unreachable"
         message={session.error}
         action={<Button onClick={() => dispatch(checkSession())}>Try again</Button>}
       />

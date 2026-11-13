@@ -78,7 +78,7 @@ export default async function handler(req, res) {
   try {
     app = await ready;
   } catch (error) {
-    console.error("CoinSplit API failed to start:", error); // like server.js, which exits with the same error
+    console.error("KoinSplit API failed to start:", error); // like server.js, which exits with the same error
     res.writeHead(503, { "Content-Type": "application/json", "Cache-Control": "no-store" });
     res.end(JSON.stringify({ error: "Service temporarily unavailable. Please try again." }));
     return;

@@ -56,7 +56,7 @@ const FAQS = [
   ],
   [
     "Do I need to connect my bank?",
-    "No. Record expenses, keep your books and track repayments without a bank connection. You can optionally save private payee details. CoinSplit never moves money or reads bank transactions.",
+    "No. Record expenses, keep your books and track repayments without a bank connection. You can optionally save private payee details. KoinSplit never moves money or reads bank transactions.",
   ],
   [
     "Can it read my receipts?",
@@ -207,7 +207,7 @@ export function LandingPage() {
               <span className="eyebrow">FAIR SHARES, WITHOUT THE MATHS</span>
               <h2>{site.featuresHeading}</h2>
               <p>
-                The shopper and the payer are not always the same person. CoinSplit keeps those details
+                The shopper and the payer are not always the same person. KoinSplit keeps those details
                 separate, so the right people get paid back.
               </p>
               <Stagger className="feature-tags" gap={0.06}>
@@ -384,7 +384,7 @@ export function LandingPage() {
 
         <ScrollToTop />
         {installOpen && (
-          <Modal title="CoinSplit on your phone" onClose={() => setInstallOpen(false)}>
+          <Modal title="KoinSplit on your phone" onClose={() => setInstallOpen(false)}>
             <InstallGuide />
           </Modal>
         )}

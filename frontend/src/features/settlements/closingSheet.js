@@ -10,7 +10,7 @@ import { PdfReport } from "../../utils/pdf.js";
 // Closings locked before v1.4.0 have no stored expense list; their expenses are locked too, so they are read from
 // the household by id.
 
-export const CLOSING_SHEET_SCHEMA = "coinsplit-closing-sheet-v1";
+export const CLOSING_SHEET_SCHEMA = "koinsplit-closing-sheet-v1";
 
 export function closingStatus(closing) {
   const payments = closing.payments ?? [];

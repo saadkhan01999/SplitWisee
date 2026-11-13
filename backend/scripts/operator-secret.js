@@ -20,10 +20,10 @@ const secret = bits
   .match(/.{5}/g)
   .map((chunk) => alphabet[parseInt(chunk, 2)])
   .join("");
-const label = encodeURIComponent("CoinSplit:owner");
+const label = encodeURIComponent("KoinSplit:owner");
 console.log(`SUPERADMIN_USER_ID=${userId}`);
 console.log(`OPERATOR_TOTP_SECRETS=${JSON.stringify({ [userId]: secret })}`);
 console.log("");
 console.log(`Authenticator key: ${secret}`);
-console.log(`otpauth://totp/${label}?secret=${secret}&issuer=CoinSplit&algorithm=SHA1&digits=6&period=30`);
+console.log(`otpauth://totp/${label}?secret=${secret}&issuer=KoinSplit&algorithm=SHA1&digits=6&period=30`);
 console.log("Keep the key private: anyone with it and your account can unlock the control centre.");

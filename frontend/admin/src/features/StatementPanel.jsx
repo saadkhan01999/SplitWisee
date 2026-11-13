@@ -60,7 +60,7 @@ export function StatementPanel({ report }) {
     setBusy(true);
     setError("");
     try {
-      saveBlob(await statementPdf(report, rows), `CoinSplit-${report.month}-Monthly-Statement.pdf`);
+      saveBlob(await statementPdf(report, rows), `KoinSplit-${report.month}-Monthly-Statement.pdf`);
     } catch (failure) {
       setError(failure.message || "The statement PDF could not be created.");
     } finally {
@@ -71,7 +71,7 @@ export function StatementPanel({ report }) {
   function downloadCsv() {
     saveBlob(
       csvBlob([
-        ["CoinSplit debit / credit record", report.month, "GBP pence; no opening balances"],
+        ["KoinSplit debit / credit record", report.month, "GBP pence; no opening balances"],
         [
           "Date",
           "Reference",
@@ -93,7 +93,7 @@ export function StatementPanel({ report }) {
           row.runningMovementPence,
         ]),
       ]),
-      `CoinSplit-${report.month}-Debit-Credit.csv`,
+      `KoinSplit-${report.month}-Debit-Credit.csv`,
     );
   }
 

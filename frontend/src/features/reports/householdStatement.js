@@ -96,7 +96,7 @@ export async function statementPdf(household, start, end) {
 export function statementJson(household, start, end) {
   const approved = expensesInPeriod(household, start, end).filter((expense) => expense.status === "approved");
   return jsonBlob({
-    schema: "coinsplit-household-statement-v1",
+    schema: "koinsplit-household-statement-v1",
     exportedAt: new Date().toISOString(),
     app: { name: brand.name, version: brand.version },
     currency: "GBP",

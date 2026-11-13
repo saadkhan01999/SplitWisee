@@ -33,7 +33,7 @@ export function RewardsPage() {
     try {
       if (navigator.share) {
         await navigator.share({
-          title: "Try CoinSplit",
+          title: "Try KoinSplit",
           text: "Share expenses. Settle easily. Join with my referral link.",
           url: data.url,
         });
@@ -90,7 +90,7 @@ export function RewardsPage() {
             Share invitation
           </Button>
           <p className="caption">
-            A referral introduces CoinSplit to someone new. To give someone access to your household, use a
+            A referral introduces KoinSplit to someone new. To give someone access to your household, use a
             member invitation instead. A referral code is never a password.
           </p>
         </section>

@@ -1,6 +1,6 @@
 {
-  "name": "CoinSplit",
-  "short_name": "CoinSplit",
+  "name": "KoinSplit",
+  "short_name": "KoinSplit",
   "start_url": "/#app",
   "scope": "/",
   "display": "standalone",
@@ -32,7 +32,7 @@
       "purpose": "maskable"
     }
   ],
-  "description": "CoinSplit - share expenses, settle easily: receipts, fair splits and monthly settlements",
+  "description": "KoinSplit - share expenses, settle easily: receipts, fair splits and monthly settlements",
   "id": "/",
   "orientation": "any",
   "categories": ["finance", "productivity"],

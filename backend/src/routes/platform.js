@@ -398,7 +398,7 @@ function installPlatform(
           createdAt: /* @__PURE__ */ new Date(),
           verifiedAt: /* @__PURE__ */ new Date(),
           referredBy: t.referredBy,
-          referralCode: "CS-" + crypto.randomBytes(6).toString("hex").toUpperCase(),
+          referralCode: "KS-" + crypto.randomBytes(6).toString("hex").toUpperCase(),
         };
         try {
           await users.insertOne(u);
@@ -501,7 +501,7 @@ function installPlatform(
               verifiedAt: /* @__PURE__ */ new Date(),
               createdAt: /* @__PURE__ */ new Date(),
               referredBy: t.referredBy,
-              referralCode: "CS-" + crypto.randomBytes(6).toString("hex").toUpperCase(),
+              referralCode: "KS-" + crypto.randomBytes(6).toString("hex").toUpperCase(),
             };
             await users.insertOne(u);
           }
@@ -524,7 +524,7 @@ function installPlatform(
     endpoint(async (req, res) => {
       let u = req.user;
       if (!u.referralCode) {
-        const code = "CS-" + crypto.randomBytes(6).toString("hex").toUpperCase();
+        const code = "KS-" + crypto.randomBytes(6).toString("hex").toUpperCase();
         await users.updateOne(
           { id: u.id, referralCode: { $exists: false } },
           { $set: { referralCode: code } },
@@ -897,7 +897,7 @@ async function syncInvoiceCredits(db, stripe, u) {
         {
           amount: -99,
           currency: "gbp",
-          description: "CoinSplit referral: one monthly fee",
+          description: "KoinSplit referral: one monthly fee",
           metadata: { referralId: e.id },
         },
         { idempotencyKey: e.id },

@@ -14,9 +14,9 @@ import { household, user } from "./helpers/fixtures.js";
 import { mockApi } from "./helpers/mockApi.js";
 import { renderWithStore, signedInState } from "./helpers/render.jsx";
 
-// CoinSplit Update Round 02: settlement periods and history, mobile navigation, exports, campaigns and statistics.
+// KoinSplit Update Round 02: settlement periods and history, mobile navigation, exports, campaigns and statistics.
 
-const REWARDS = { code: "CS-TEST", url: "", freeMonths: 0, rewards: [], subscription: "Not subscribed" };
+const REWARDS = { code: "KS-TEST", url: "", freeMonths: 0, rewards: [], subscription: "Not subscribed" };
 const member = { ...user, id: "u-member", name: "Chloe Diaz" };
 
 const october = {
@@ -98,9 +98,9 @@ const readBlob = (blob) =>
   });
 
 describe("brand", () => {
-  it("renders the CoinSplit vector logo with an accessible name", () => {
+  it("renders the KoinSplit vector logo with an accessible name", () => {
     render(<Logo />);
-    expect(screen.getByText("CoinSplit")).toBeInTheDocument();
+    expect(screen.getByText("KoinSplit")).toBeInTheDocument();
     expect(document.querySelectorAll(".brand svg path")).toHaveLength(2);
     expect(screen.getByText("SHARE EXPENSES. SETTLE EASILY.")).toBeInTheDocument();
   });
@@ -271,13 +271,13 @@ describe("settlement history and closing sheets", () => {
   it("exports machine-readable sheets with a stable schema and frozen names", async () => {
     const data = withHistory();
     const json = JSON.parse(await readBlob(closingSheetJson(data, october)));
-    expect(json.schema).toBe("coinsplit-closing-sheet-v1");
+    expect(json.schema).toBe("koinsplit-closing-sheet-v1");
     expect(json.closing.totalPence).toBe(11400);
     expect(json.closing.originalReceiptsKeptUntil).toBe("2026-12-01");
     expect(json.expenses.map((e) => e.title)).toEqual(["Weekly shop", "Cleaning supplies"]);
     expect(json.transfers[0]).toMatchObject({ from: "Chloe Diaz", to: "Amira Shah", amountPence: 3800 });
     const csv = await readBlob(closingSheetCsv(data, october));
-    expect(csv).toContain('"CoinSplit","Closing sheet","coinsplit-closing-sheet-v1"');
+    expect(csv).toContain('"KoinSplit","Closing sheet","koinsplit-closing-sheet-v1"');
     expect(csv).toContain('"Total recorded","","","","114.00"');
   });
 });
@@ -321,7 +321,7 @@ describe("campaigns", () => {
     redeemable: true,
     upcoming: false,
     title: "Christmas offer",
-    banner: "Christmas offer: your first month of CoinSplit is free (100% off).",
+    banner: "Christmas offer: your first month of KoinSplit is free (100% off).",
     details: "One free month per account.",
     startsAt: "2026-12-01",
     endsAt: "2026-12-31",
@@ -348,14 +348,14 @@ describe("campaigns", () => {
       "GET /public/charity": () => ({
         published: true,
         percent: 25,
-        basis: "net profit from CoinSplit subscriptions",
+        basis: "net profit from KoinSplit subscriptions",
         period: "each calendar year",
         beneficiary: "Example Foundation",
         conditions: "Before tax.",
         reporting: "Reported yearly.",
         effectiveFrom: "2027-01-01",
         statement:
-          "25% of our net profit from CoinSplit subscriptions goes to Example Foundation, each calendar year.",
+          "25% of our net profit from KoinSplit subscriptions goes to Example Foundation, each calendar year.",
       }),
     });
     renderWithStore(<LandingPage />);
@@ -462,7 +462,7 @@ describe("website navigation and favicon", () => {
     expect(window.location.hash).toBe("#pricing");
     const footer = screen.getByRole("contentinfo");
     expect(within(footer).getByRole("navigation", { name: "Product" })).toHaveTextContent("How it works");
-    expect(footer).toHaveTextContent(`© ${new Date().getFullYear()} CoinSplit`);
+    expect(footer).toHaveTextContent(`© ${new Date().getFullYear()} KoinSplit`);
     expect(document.querySelector(".scroll-progress")).toBeInTheDocument();
   });
 

@@ -145,7 +145,7 @@ if (runAsScript) {
   if (process.argv.includes("--json")) {
     console.log(JSON.stringify(report, null, 2));
   } else {
-    console.log(`CoinSplit API v${version} — configuration ${report.configuration}`);
+    console.log(`KoinSplit API v${version} — configuration ${report.configuration}`);
     for (const check of report.checks)
       console.log(`[${check.status.toUpperCase()}] ${check.id}: ${check.detail}`);
     console.log(report.note);

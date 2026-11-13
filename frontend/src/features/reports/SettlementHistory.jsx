@@ -133,7 +133,7 @@ export function SettlementHistory() {
           </EmptyState>
         )}
         <p className="caption">
-          Each PDF shows the CoinSplit logo and version, household and period, frozen balances and transfers,
+          Each PDF shows the KoinSplit logo and version, household and period, frozen balances and transfers,
           the export time and page numbers.
         </p>
       </section>

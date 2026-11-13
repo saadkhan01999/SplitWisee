@@ -51,7 +51,7 @@ const port = Number(process.env.PORT || 5000);
 const host = process.env.HOST || "0.0.0.0";
 const server = app.listen(port, host, () => {
   console.info(
-    `CoinSplit API ready (v${version}) on http://${host === "0.0.0.0" ? "localhost" : host}:${port}`,
+    `KoinSplit API ready (v${version}) on http://${host === "0.0.0.0" ? "localhost" : host}:${port}`,
   );
 });
 

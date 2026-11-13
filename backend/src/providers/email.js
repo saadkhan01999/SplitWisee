@@ -27,8 +27,8 @@ export function createCodeSender({ production, override }) {
     await transport.sendMail({
       from: process.env.EMAIL_FROM,
       to: address,
-      subject: "CoinSplit: " + subject,
-      text: `Your CoinSplit ${subject.toLowerCase()} code is:
+      subject: "KoinSplit: " + subject,
+      text: `Your KoinSplit ${subject.toLowerCase()} code is:
 
 ${code}
 

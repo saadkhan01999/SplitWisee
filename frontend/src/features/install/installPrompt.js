@@ -34,7 +34,7 @@ export function listenForInstallPrompt() {
     update({
       canPrompt: false,
       installed: true,
-      message: "CoinSplit is installed. Open it from your home screen.",
+      message: "KoinSplit is installed. Open it from your home screen.",
     });
   });
 }
@@ -51,7 +51,7 @@ export async function promptInstall() {
     update({
       message:
         outcome === "accepted"
-          ? "Installation accepted. When your browser finishes, open CoinSplit from your home screen."
+          ? "Installation accepted. When your browser finishes, open KoinSplit from your home screen."
           : "Installation dismissed. You can install later from your browser menu.",
     });
   } catch {

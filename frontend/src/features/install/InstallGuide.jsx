@@ -40,7 +40,7 @@ function Steps({ ios }) {
       <li>
         Turn on <strong>Open as Web App</strong> if shown, then tap <strong>Add</strong>.
       </li>
-      <li>Open the CoinSplit icon and sign in.</li>
+      <li>Open the KoinSplit icon and sign in.</li>
     </ol>
   ) : (
     <ol className="install-steps">
@@ -55,7 +55,7 @@ function Steps({ ios }) {
         No prompt? Open the browser menu and choose <strong>Install app</strong> or{" "}
         <strong>Add to home screen</strong>.
       </li>
-      <li>Open the CoinSplit icon and sign in.</li>
+      <li>Open the KoinSplit icon and sign in.</li>
     </ol>
   );
 }
@@ -73,7 +73,7 @@ export function InstallGuide() {
 
   let notice;
   if (env.standalone) notice = "You are using the installed app.";
-  else if (installed) notice = "Open the CoinSplit icon on your home screen. This tab can stay open.";
+  else if (installed) notice = "Open the KoinSplit icon on your home screen. This tab can stay open.";
   else if (env.embedded)
     notice = "Open this link in Safari or Chrome, outside this in-app browser, to install.";
   else if (env.ios) notice = "On iPhone and iPad, install from Safari’s Share menu.";
@@ -86,7 +86,7 @@ export function InstallGuide() {
           ? "Your mobile app is open"
           : installed
             ? "Installed on this device"
-            : "Install CoinSplit on your phone"}
+            : "Install KoinSplit on your phone"}
       </h3>
       <div className="install-summary">
         <strong>One app. All your household tools.</strong>
@@ -119,7 +119,7 @@ export function InstallGuide() {
       </div>
       {copyState && copyState !== "Link copied" && <p role="status">{copyState}</p>}
       <p className="caption">
-        CoinSplit is an installable web app (PWA), not an app-store download. An internet connection is needed
+        KoinSplit is an installable web app (PWA), not an app-store download. An internet connection is needed
         for your account, uploads and payments.
       </p>
       <details>

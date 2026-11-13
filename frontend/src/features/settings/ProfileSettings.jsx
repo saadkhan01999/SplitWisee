@@ -49,7 +49,7 @@ export function ProfileSettings() {
   }
 
   const exportData = () =>
-    save.run(async () => saveBlob(jsonBlob(await api.get("/account/export")), "CoinSplit-My-Profile.json"));
+    save.run(async () => saveBlob(jsonBlob(await api.get("/account/export")), "KoinSplit-My-Profile.json"));
 
   if (!profile)
     return (
