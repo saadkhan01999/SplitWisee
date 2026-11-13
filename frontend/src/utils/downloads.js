@@ -33,3 +33,15 @@ export function safeFilename(value, fallback = "file") {
       .slice(0, 48) || fallback
   );
 }
+
+/**
+ * Descriptive export file names: "CoinSplit-Willow-House-Closing-sheet-2026-10-01-to-2026-10-31.pdf".
+ * Parts are kept to letters, digits and hyphens so every file system and mail client accepts them.
+ */
+export function exportFilename({ household, document, start, end, ext }) {
+  const range = start && end ? `${start}-to-${end}` : start || "";
+  return [brand.name, household && safeFilename(household), safeFilename(document), range]
+    .filter(Boolean)
+    .join("-")
+    .concat(`.${ext}`);
+}

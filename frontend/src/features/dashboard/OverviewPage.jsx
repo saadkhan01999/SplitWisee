@@ -12,6 +12,8 @@ import { selectBalances, selectHousehold } from "../household/householdSlice.js"
 import { AccessStatus } from "../rewards/AccessStatus.jsx";
 import { loadRewards, selectRewards } from "../rewards/rewardsSlice.js";
 import { selectUser } from "../session/sessionSlice.js";
+import { PromoRibbon } from "../website/Campaigns.jsx";
+import { loadCampaigns, selectPromotion } from "../website/siteSlice.js";
 
 const MONTHS_SHOWN = 12;
 
@@ -89,9 +91,15 @@ export function OverviewPage() {
     [household],
   );
   const activeMembers = household.members.filter((member) => !member.left);
+  const promotion = useSelector(selectPromotion);
+
+  useEffect(() => {
+    dispatch(loadCampaigns());
+  }, [dispatch]);
 
   return (
     <>
+      <PromoRibbon promotion={promotion} onClaim={() => dispatch(goToTab("rewards"))} />
       <AccessOverview />
       <div className="dashboard-grid">
         <section className="balance-hero">

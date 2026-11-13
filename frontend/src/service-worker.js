@@ -1,4 +1,4 @@
-/* SplitWisee service worker: offline page and cached static assets only. API responses, account data and
+/* CoinSplit service worker: offline page and cached static assets only. API responses, account data and
    receipts are never cached. The release version below is stamped at build time so each release starts fresh caches. */
 
 const VERSION = "__APP_VERSION__";

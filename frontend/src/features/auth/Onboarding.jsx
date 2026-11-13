@@ -149,7 +149,7 @@ function PlanStep({ householdId }) {
             : "One simple monthly plan"}
       </h3>
       <div className="plan-summary">
-        <span>SplitWisee Everyday</span>
+        <span>CoinSplit Everyday</span>
         <strong>
           {access.free ? "£0.00" : "£0.99"}
           <small>{access.free ? "due today" : "per user / month"}</small>

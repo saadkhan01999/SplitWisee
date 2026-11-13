@@ -1,6 +1,6 @@
 {
-  "name": "SplitWisee",
-  "short_name": "SplitWisee",
+  "name": "CoinSplit",
+  "short_name": "CoinSplit",
   "start_url": "/#app",
   "scope": "/",
   "display": "standalone",
@@ -24,9 +24,15 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ],
-  "description": "SplitWisee - shared expenses, receipts and monthly bookkeeping",
+  "description": "CoinSplit - share expenses, settle easily: receipts, fair splits and monthly settlements",
   "id": "/",
   "orientation": "any",
   "categories": ["finance", "productivity"],

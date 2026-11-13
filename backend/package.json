@@ -1,7 +1,7 @@
 {
   "name": "splitwisee-backend",
-  "version": "1.3.0",
-  "description": "SplitWisee REST API (Express 5 + MongoDB).",
+  "version": "1.4.0",
+  "description": "CoinSplit REST API (Express 5 + MongoDB).",
   "private": true,
   "type": "module",
   "main": "src/server.js",
@@ -18,7 +18,8 @@
     "routes": "node scripts/list-routes.js",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "operator:secret": "node scripts/operator-secret.js"
   },
   "dependencies": {
     "argon2": "^0.41.1",

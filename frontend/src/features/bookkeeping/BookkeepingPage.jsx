@@ -4,7 +4,7 @@ import { money } from "@domain/calculation-engine/index.js";
 import { useHouseholdAction } from "../../app/hooks.js";
 import { Button } from "../../components/Button.jsx";
 import { Field, FormError } from "../../components/Field.jsx";
-import { saveBlob } from "../../utils/downloads.js";
+import { exportFilename, saveBlob } from "../../utils/downloads.js";
 import { EXPENSE_CATEGORIES, formatMoney, todayIso } from "../../utils/format.js";
 import {
   selectHousehold,
@@ -113,7 +113,12 @@ export function BookkeepingPage() {
         <Button
           variant="outline"
           icon="download"
-          onClick={() => saveBlob(bookCsv(household, month, book), `SplitWisee-Books-${month}.csv`)}
+          onClick={() =>
+            saveBlob(
+              bookCsv(household, month, book),
+              exportFilename({ household: household.name, document: "Books", start: month, ext: "csv" }),
+            )
+          }
         >
           Export month CSV
         </Button>

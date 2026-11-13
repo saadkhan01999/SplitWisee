@@ -98,5 +98,6 @@ test("every operator mutation is guarded by session, role and unlock middleware"
   );
   for (const r of routes.filter((r) => r.path.includes("/operator/")))
     assert.deepEqual(r.handlers.slice(0, 3), [session, operator, unlocked]);
-  assert.equal(routes.filter((r) => r.path.includes("/operator/")).length, 12);
+  // v1.4.0 adds promotion, charity and three receipt-retention controls.
+  assert.equal(routes.filter((r) => r.path.includes("/operator/")).length, 17);
 });

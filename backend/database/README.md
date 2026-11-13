@@ -15,7 +15,7 @@ There is no seed or demo data. Every record is created through the API by real s
 **MongoDB Atlas (recommended).** Create a cluster (any tier, it is a replica set), a database user, and an IP access-list entry for your machine or server. Copy the `mongodb+srv://` connection string into `backend/.env`:
 
 ```ini
-MONGODB_URI=mongodb+srv://<user>:<url-encoded-password>@<cluster-host>/?retryWrites=true&w=majority&appName=SplitWisee
+MONGODB_URI=mongodb+srv://<user>:<url-encoded-password>@<cluster-host>/?retryWrites=true&w=majority&appName=CoinSplit
 MONGODB_DB=splitwisee_dev
 ```
 

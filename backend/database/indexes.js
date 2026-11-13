@@ -34,6 +34,11 @@ export const INDEXES = [
   // v1.2.7: shared rate-limit windows and authentication failure locks. Bounded by TTL; one document per active key.
   ["throttles", { key: 1 }, { unique: true }],
   ["throttles", { expiresAt: 1 }, { expireAfterSeconds: 0 }],
+  // v1.4.0: promotion claims (one per account per campaign) and the invitation audit trail.
+  ["promotionRedemptions", { id: 1 }, { unique: true }],
+  ["promotionRedemptions", { at: -1 }, {}],
+  ["invitationEvents", { id: 1 }, { unique: true }],
+  ["invitationEvents", { at: -1 }, {}],
 ];
 
 export async function ensureIndexes(db) {

@@ -1,6 +1,7 @@
 import { balances, sum } from "@domain/calculation-engine/index.js";
 import { brand } from "../../config/brand.js";
 import { csvBlob } from "../../utils/csv.js";
+import { jsonBlob } from "../../utils/downloads.js";
 import { formatLongDate, formatMoney, signedAmount } from "../../utils/format.js";
 import { PdfReport } from "../../utils/pdf.js";
 
@@ -40,7 +41,11 @@ export function expensesCsv(household, start, end, memberName) {
 export async function statementPdf(household, start, end) {
   const rows = balances(household, start, end).filter((row) => row.funded || row.share || row.net);
   const approved = expensesInPeriod(household, start, end).filter((expense) => expense.status === "approved");
-  const report = await PdfReport.create({ label: "HOUSEHOLD STATEMENT" });
+  const report = await PdfReport.create({
+    label: "HOUSEHOLD STATEMENT",
+    household: household.name,
+    range: [start, end],
+  });
 
   report.heading(household.name);
   report.muted(
@@ -85,4 +90,35 @@ export async function statementPdf(household, start, end) {
     "Balances use the exact-pence household ledger. Manual repayments are recipient-confirmed, not bank-verified.",
     "This statement is a household record, not a tax document.",
   ]);
+}
+
+/** Machine-readable statement: integer GBP pence, stable schema name. */
+export function statementJson(household, start, end) {
+  const approved = expensesInPeriod(household, start, end).filter((expense) => expense.status === "approved");
+  return jsonBlob({
+    schema: "coinsplit-household-statement-v1",
+    exportedAt: new Date().toISOString(),
+    app: { name: brand.name, version: brand.version },
+    currency: "GBP",
+    household: { id: household.id, name: household.name },
+    period: { start, end, state: periodState(household, start, end) },
+    totalPence: sum(approved.map(signedAmount)),
+    members: balances(household, start, end)
+      .filter((row) => row.funded || row.share || row.net)
+      .map((row) => ({
+        id: row.id,
+        name: row.name,
+        fundedPence: row.funded,
+        sharePence: row.share,
+        balancePence: row.net,
+      })),
+    expenses: approved.map((expense) => ({
+      id: expense.id,
+      date: expense.date,
+      title: expense.title,
+      category: expense.category,
+      purchasedBy: expense.purchasedBy,
+      amountPence: signedAmount(expense),
+    })),
+  });
 }

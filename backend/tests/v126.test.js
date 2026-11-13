@@ -182,7 +182,14 @@ test("removed inviters cannot grant household access using an old link", async (
           return {
             async findOne() {
               return n === "tokens"
-                ? { id: "invite", householdId: s.id, invitedBy: "m3", room: "Room 2" }
+                ? {
+                    id: "invite",
+                    householdId: s.id,
+                    invitedBy: "m3",
+                    room: "Room 2",
+                    recipient: "new@example.test",
+                    expiresAt: new Date(Date.now() + 864e5),
+                  }
                 : s;
             },
             async updateOne() {

@@ -31,6 +31,11 @@ const PATHS = {
   gift: "M3 8h18v4H3z M5 12v9h14v-9 M12 8v13 M12 8c-2-4-6-4-6-1 0 1 1 1 6 1 M12 8c2-4 6-4 6-1 0 1-1 1-6 1",
   bank: "M3 10h18 M4 10V20 M20 10v10 M9 10v10 M15 10v10 M2 21h20 M12 3l9 5H3z",
   help: "M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0 M9 9a3 3 0 1 1 4 3c-1 1-1 1-1 3 M12 18h.01",
+  more: "M4 4h6v6H4z M14 4h6v6h-6z M4 14h6v6H4z M14 14h6v6h-6z",
+  calendar: "M4 5h16v16H4z M4 10h16 M9 3v4 M15 3v4",
+  lock: "M6 11h12v10H6z M8 11V7a4 4 0 0 1 8 0v4",
+  heart: "M12 20s-8-4.7-8-10.2A4.6 4.6 0 0 1 12 7a4.6 4.6 0 0 1 8 2.8C20 15.3 12 20 12 20",
+  spark: "M12 3l2.4 6.6L21 12l-6.6 2.4L12 21l-2.4-6.6L3 12l6.6-2.4z",
 };
 
 const TAB_ICONS = { books: "books", rewards: "gift", bank: "bank" };

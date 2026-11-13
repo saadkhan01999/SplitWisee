@@ -8,6 +8,7 @@ import { Field, FormError } from "../../components/Field.jsx";
 import { copyText } from "../../utils/downloads.js";
 import { formatDate } from "../../utils/format.js";
 import { AccessStatus } from "./AccessStatus.jsx";
+import { PromotionClaim } from "./PromotionClaim.jsx";
 import { loadRewards, selectRewards } from "./rewardsSlice.js";
 
 const SUBSCRIPTION_LABELS = {
@@ -32,8 +33,8 @@ export function RewardsPage() {
     try {
       if (navigator.share) {
         await navigator.share({
-          title: "Try SplitWisee",
-          text: "Split simply. Live freely. Join with my referral link.",
+          title: "Try CoinSplit",
+          text: "Share expenses. Settle easily. Join with my referral link.",
           url: data.url,
         });
       } else {
@@ -55,6 +56,7 @@ export function RewardsPage() {
   return (
     <>
       <AccessStatus data={data} />
+      <PromotionClaim />
       <div className="reward-hero">
         <span className="eyebrow">GOOD THINGS ARE BETTER SHARED</span>
         <h2>
@@ -88,7 +90,7 @@ export function RewardsPage() {
             Share invitation
           </Button>
           <p className="caption">
-            A referral introduces SplitWisee to someone new. To give someone access to your household, use a
+            A referral introduces CoinSplit to someone new. To give someone access to your household, use a
             member invitation instead. A referral code is never a password.
           </p>
         </section>

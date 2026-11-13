@@ -27,23 +27,38 @@ function openapiRoutes(yaml) {
   return out;
 }
 
-test("every registered route is documented in openapi.yaml, API_REFERENCE.md and README.md (and nothing extra)", async () => {
+// backend/docs/ is excluded by the root .gitignore (docs/), so those checks run only where the folder exists.
+const DOCS = fs.existsSync(new URL("../docs/api/openapi.yaml", import.meta.url));
+const NO_DOCS = "backend/docs/ is not in this checkout (excluded by .gitignore)";
+
+test("every registered route is listed in the README API table", async () => {
   const routes = await listRoutes();
   assert.equal(new Set(routes).size, routes.length, "no duplicate registrations");
-  const spec = openapiRoutes(read("../docs/api/openapi.yaml"));
-  assert.deepEqual([...spec].sort(), [...routes].sort(), "openapi.yaml operations match the router exactly");
-  const reference = read("../docs/API_REFERENCE.md"),
-    readme = read("../../README.md");
-  for (const r of routes) {
-    assert.ok(
-      reference.includes("`" + r + "`") || reference.includes("`" + r + "?"),
-      "API_REFERENCE.md documents " + r,
-    );
-    assert.ok(readme.includes("`" + r + "`"), "README.md documents " + r);
-  }
+  const readme = read("../../README.md");
+  for (const r of routes) assert.ok(readme.includes("`" + r + "`"), "README.md documents " + r);
 });
 
-test("every household action type is documented", async () => {
+test(
+  "every registered route is documented in openapi.yaml and API_REFERENCE.md (and nothing extra)",
+  { skip: !DOCS && NO_DOCS },
+  async () => {
+    const routes = await listRoutes();
+    const spec = openapiRoutes(read("../docs/api/openapi.yaml"));
+    assert.deepEqual(
+      [...spec].sort(),
+      [...routes].sort(),
+      "openapi.yaml operations match the router exactly",
+    );
+    const reference = read("../docs/API_REFERENCE.md");
+    for (const r of routes)
+      assert.ok(
+        reference.includes("`" + r + "`") || reference.includes("`" + r + "?"),
+        "API_REFERENCE.md documents " + r,
+      );
+  },
+);
+
+test("every household action type is documented", { skip: !DOCS && NO_DOCS }, async () => {
   const { ACTION_TYPES } = await import("../src/routes/households.js");
   const reference = read("../docs/API_REFERENCE.md"),
     yaml = read("../docs/api/openapi.yaml");

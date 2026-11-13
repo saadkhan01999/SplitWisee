@@ -8,6 +8,8 @@ export function installInvitations(
   const users = db.collection("users"),
     tokens = db.collection("tokens"),
     households = db.collection("households");
+  // Invitation history for the platform audit; recipients are never stored here.
+  const logInvitation = (entry) => db.collection("invitationEvents").insertOne({ id: uid(), ...entry });
   app.post(
     "/api/v1/households/:id/invites",
     session,
@@ -21,6 +23,7 @@ export function installInvitations(
       const room = String(req.body.room || member.room);
       if (!roomNames(s).includes(room)) fail("Choose an existing room.");
       const raw = token();
+      const now = new Date();
       await tokens.insertOne({
         id: hash(raw),
         type: "invite",
@@ -28,8 +31,10 @@ export function installInvitations(
         invitedBy: req.user.id,
         recipient: e,
         room,
-        expiresAt: new Date(Date.now() + 7 * 864e5),
+        createdAt: now,
+        expiresAt: new Date(now.getTime() + 7 * 864e5),
       });
+      await logInvitation({ status: "created", householdId: s.id, invitedBy: req.user.id, at: now });
       res.status(201).json({ token: raw, expiresInDays: 7 });
     }),
   );
@@ -37,17 +42,25 @@ export function installInvitations(
     "/api/v1/invites/accept",
     session,
     endpoint(async (req, res) => {
-      const t = await tokens.findOne({
-        id: hash(String(req.body.token || "")),
-        type: "invite",
-        $or: [
-          { recipient: req.user.email || "__none__" },
-          { recipient: req.user.phone || "__none__" },
-          { email: req.user.email || "__none__" },
-        ],
-        expiresAt: { $gt: /* @__PURE__ */ new Date() },
-      });
-      if (!t) fail("Invitation is invalid, expired, or belongs to a different email.", 403);
+      // Each failure gets its own recovery message; the link is single-purpose, single-use and recipient-bound.
+      const t = await tokens.findOne({ id: hash(String(req.body.token || "")), type: "invite" });
+      if (!t)
+        fail(
+          "This invitation link is not valid or has expired. Ask the household for a new invitation.",
+          404,
+        );
+      if (t.usedAt) {
+        if (t.usedBy === req.user.id) return res.json({ ok: true, householdId: t.householdId });
+        fail("This invitation has already been used. Ask the household for a new invitation.", 410);
+      }
+      if (new Date(t.expiresAt) <= new Date())
+        fail("This invitation has expired (links last 7 days). Ask the household for a new invitation.", 410);
+      const intended = t.recipient ?? t.email;
+      if (![req.user.email, req.user.phone].filter(Boolean).includes(intended))
+        fail(
+          "This invitation was sent to a different email or phone number. Sign in with that account, or ask for a new invitation.",
+          403,
+        );
       const source = await households.findOne({ id: t.householdId });
       if (!source || source.suspended) fail("Household unavailable.", 403);
       if (t.invitedBy && !source.members.some((m) => m.id === t.invitedBy && !m.left))
@@ -55,10 +68,12 @@ export function installInvitations(
       if (!roomNames(source).includes(t.room))
         fail("This invitation’s room changed. Request a new invitation.", 409);
       const joined = /* @__PURE__ */ new Date().toISOString().slice(0, 10);
+      const inviter = source.members.find((m) => m.id === t.invitedBy);
+      // Atomic join: the members filter prevents a double join without depending on the household version, so a
+      // concurrent household edit no longer turns a valid acceptance into "household not found".
       const result = await households.updateOne(
         {
           id: t.householdId,
-          version: source.version,
           suspended: { $ne: true },
           "members.id": { $ne: req.user.id },
         },
@@ -71,7 +86,7 @@ export function installInvitations(
                   id: uid(),
                   actorId: req.user.id,
                   action: "member joined",
-                  detail: req.user.name,
+                  detail: inviter ? `${req.user.name} (invited by ${inviter.name})` : req.user.name,
                   at: /* @__PURE__ */ new Date().toISOString(),
                 },
               ],
@@ -95,11 +110,20 @@ export function installInvitations(
       ) {
         await users.updateOne(
           { id: req.user.id, referredBy: { $in: [null] } },
-          { $set: { referredBy: t.invitedBy } },
+          { $set: { referredBy: t.invitedBy, referredVia: "invitation" } },
         );
         await platform.qualify(await users.findOne({ id: req.user.id }));
       }
-      await tokens.deleteOne({ id: t.id });
+      // Kept (not deleted) until it expires, so a reused link says "already used" instead of "invalid".
+      await tokens.updateOne({ id: t.id }, { $set: { usedAt: new Date(), usedBy: req.user.id } });
+      if (result.matchedCount)
+        await logInvitation({
+          status: "accepted",
+          householdId: t.householdId,
+          invitedBy: t.invitedBy,
+          userId: req.user.id,
+          at: new Date(),
+        });
       res.json({ ok: true, householdId: t.householdId });
     }),
   );

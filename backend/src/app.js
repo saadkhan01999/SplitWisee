@@ -71,6 +71,7 @@ export async function createApp(db, options = {}) {
 
   const app = express();
   app.disable("x-powered-by");
+  app.locals.receiptDir = receiptDir; // for the receipt retention job in src/server.js
   if (process.env.TRUST_PROXY_HOPS) app.set("trust proxy", Number(process.env.TRUST_PROXY_HOPS));
   app.use(securityHeaders(production));
   if (corsOrigins.length) app.use("/api", corsForOrigins(corsOrigins));
@@ -116,6 +117,7 @@ export async function createApp(db, options = {}) {
     limiters,
     quota,
     throttle,
+    receiptDir,
   });
   installAccount(app, { db, session, endpoint, safeUser });
   installPasswordAuth(app, {

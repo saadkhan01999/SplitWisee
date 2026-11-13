@@ -90,7 +90,7 @@ function exportCsv(records, section) {
   );
   saveBlob(
     csvBlob([keys, ...records.map((record) => keys.map((key) => record[key]))]),
-    `SplitWisee-${section.toLowerCase()}.csv`,
+    `CoinSplit-${section.toLowerCase()}.csv`,
   );
 }
 

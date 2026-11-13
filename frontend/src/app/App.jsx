@@ -59,7 +59,7 @@ function Routes() {
   if (session.status === "unavailable")
     return (
       <StatusScreen
-        title="SplitWisee is unreachable"
+        title="CoinSplit is unreachable"
         message={session.error || "The service did not respond. Check your connection and try again."}
         action={<Button onClick={() => dispatch(resumeSession())}>Try again</Button>}
       />

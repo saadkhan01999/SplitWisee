@@ -4,11 +4,19 @@ import { goToPage } from "../../app/navigationSlice.js";
 import { Logo } from "../../components/Logo.jsx";
 import { Modal } from "../../components/Modal.jsx";
 import { brand } from "../../config/brand.js";
+import { formatLongDate } from "../../utils/format.js";
 import { InstallAppButton, InstallGuide } from "../install/InstallGuide.jsx";
 import { AppViewSwitch } from "../preferences/AppViewSwitch.jsx";
 import { selectIsSignedIn } from "../session/sessionSlice.js";
 import { Announcements } from "./Announcements.jsx";
-import { loadSiteSettings, selectSiteSettings } from "./siteSlice.js";
+import { CharitySection, PromoRibbon } from "./Campaigns.jsx";
+import {
+  loadCampaigns,
+  loadSiteSettings,
+  selectCharity,
+  selectPromotion,
+  selectSiteSettings,
+} from "./siteSlice.js";
 import { SplitPreview } from "./SplitPreview.jsx";
 
 const STEPS = [
@@ -36,7 +44,7 @@ const FAQS = [
   ],
   [
     "Do I need to connect my bank?",
-    "No. Record expenses, keep your books and track repayments without a bank connection. You can optionally save private payee details. SplitWisee never moves money or reads bank transactions.",
+    "No. Record expenses, keep your books and track repayments without a bank connection. You can optionally save private payee details. CoinSplit never moves money or reads bank transactions.",
   ],
   [
     "Can it read my receipts?",
@@ -56,12 +64,15 @@ export function LandingPage() {
   const dispatch = useDispatch();
   const site = useSelector(selectSiteSettings);
   const signedIn = useSelector(selectIsSignedIn);
+  const promotion = useSelector(selectPromotion);
+  const charity = useSelector(selectCharity);
   const [menuOpen, setMenuOpen] = useState(false);
   const [openFaq, setOpenFaq] = useState(0);
   const [installOpen, setInstallOpen] = useState(false);
 
   useEffect(() => {
     dispatch(loadSiteSettings());
+    dispatch(loadCampaigns());
   }, [dispatch]);
 
   useEffect(() => {
@@ -74,6 +85,7 @@ export function LandingPage() {
 
   return (
     <div className="marketing">
+      <PromoRibbon promotion={promotion} onClaim={start} />
       <header
         className="marketing-nav"
         onKeyDown={(event) => {
@@ -98,6 +110,7 @@ export function LandingPage() {
             <a href="#how">How it works</a>
             <a href="#features">Features</a>
             {site.showPricing !== false && <a href="#pricing">Pricing</a>}
+            {charity.published && <a href="#giving-back">Giving back</a>}
           </nav>
           <div className="account-actions">
             <AppViewSwitch onMobile={signIn} />
@@ -171,7 +184,7 @@ export function LandingPage() {
             <span className="eyebrow">FAIR SHARES, WITHOUT THE MATHS</span>
             <h2>{site.featuresHeading}</h2>
             <p>
-              The shopper and the payer are not always the same person. SplitWisee keeps those details
+              The shopper and the payer are not always the same person. CoinSplit keeps those details
               separate, so the right people get paid back.
             </p>
             <div className="feature-tags">
@@ -205,6 +218,13 @@ export function LandingPage() {
               </button>
             </div>
             <article className="price-card">
+              {promotion.active && (
+                <p className="price-offer">
+                  {promotion.title}: £0 for your first{" "}
+                  {promotion.freeMonths === 1 ? "month" : `${promotion.freeMonths} months`} when claimed{" "}
+                  {formatLongDate(promotion.startsAt)} – {formatLongDate(promotion.endsAt)}.
+                </p>
+              )}
               <span>THE EVERYDAY PLAN</span>
               <h3>
                 £0.99<small>per user / month</small>
@@ -220,6 +240,8 @@ export function LandingPage() {
             </article>
           </section>
         )}
+
+        <CharitySection charity={charity} />
 
         <section className="marketing-section faq">
           <span className="eyebrow">GOOD QUESTIONS</span>
@@ -252,6 +274,11 @@ export function LandingPage() {
       <footer className="marketing-footer">
         <strong>{brand.name}</strong>
         <span>{site.footerText}</span>
+        {charity.published && (
+          <a href="#giving-back">
+            {charity.percent}% of our {charity.basis} goes to charity
+          </a>
+        )}
         <a href="/admin/">Operator sign in</a>
         {site.privacyUrl && (
           <a href={site.privacyUrl} target="_blank" rel="noopener noreferrer">
@@ -268,7 +295,7 @@ export function LandingPage() {
       </footer>
 
       {installOpen && (
-        <Modal title="SplitWisee on your phone" onClose={() => setInstallOpen(false)}>
+        <Modal title="CoinSplit on your phone" onClose={() => setInstallOpen(false)}>
           <InstallGuide />
         </Modal>
       )}

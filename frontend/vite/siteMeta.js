@@ -27,7 +27,7 @@ function seoTags({ siteUrl, title, description }) {
   const jsonLd = JSON.stringify({
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    name: "SplitWisee",
+    name: "CoinSplit",
     url: `${siteUrl}/`,
     applicationCategory: "FinanceApplication",
     operatingSystem: "Web",
@@ -37,7 +37,7 @@ function seoTags({ siteUrl, title, description }) {
   return [
     `<link rel="canonical" href="${siteUrl}/">`,
     `<meta property="og:type" content="website">`,
-    `<meta property="og:site_name" content="SplitWisee">`,
+    `<meta property="og:site_name" content="CoinSplit">`,
     `<meta property="og:locale" content="en_GB">`,
     `<meta property="og:title" content="${escapeHtml(title)}">`,
     `<meta property="og:description" content="${escapeHtml(description)}">`,

@@ -17,6 +17,8 @@ import platformSettings from "./models/platformSettings.js";
 import retentionCampaigns from "./models/retentionCampaigns.js";
 import supportTickets from "./models/supportTickets.js";
 import throttles from "./models/throttles.js";
+import promotionRedemptions from "./models/promotionRedemptions.js";
+import invitationEvents from "./models/invitationEvents.js";
 export const validators = {
   users,
   households,
@@ -36,4 +38,6 @@ export const validators = {
   retentionCampaigns,
   supportTickets,
   throttles,
+  promotionRedemptions,
+  invitationEvents,
 };

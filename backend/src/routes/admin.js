@@ -1,4 +1,6 @@
+import { installCampaigns } from "./campaigns.js";
 import { installFinance } from "./finance.js";
+import { installInsights } from "./insights.js";
 import crypto from "node:crypto";
 import { normaliseCoupon } from "../services/promotions.js";
 const id = () => crypto.randomUUID(),
@@ -6,7 +8,10 @@ const id = () => crypto.randomUUID(),
     throw Object.assign(new Error(m), { status });
   };
 import { defaultSettings, cleanWebsite } from "../modules/site-settings/index.js";
-function installAdmin(app, { db, session, operator, unlocked, endpoint, stripe, encryptBank }) {
+function installAdmin(
+  app,
+  { db, session, operator, unlocked, endpoint, stripe, encryptBank, receiptDir, rewardWindow, accessEvents },
+) {
   const audit = db.collection("operatorAudit");
   const guard = [session, operator, unlocked];
   const reason = (req) => {
@@ -34,6 +39,8 @@ function installAdmin(app, { db, session, operator, unlocked, endpoint, stripe, 
     }
   }
   installFinance(app, { db, guard, endpoint, stripe, event, encryptBank });
+  installCampaigns(app, { db, session, endpoint, guard, event, rewardWindow, accessEvents });
+  installInsights(app, { db, guard, endpoint, event, receiptDir });
   app.get(
     "/api/v1/public/settings",
     endpoint(async (_req, res) => {

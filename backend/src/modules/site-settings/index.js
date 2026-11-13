@@ -11,7 +11,7 @@ export const defaultSettings = {
   heroDescription:
     "From the weekly shop to the monthly bills, keep every receipt, fair share and repayment in one calm place.",
   ctaLabel: "Start sharing better",
-  footerText: "Split simply. Live freely.",
+  footerText: "Share expenses. Settle easily.",
   eyebrow: "A LITTLE CLARITY. A HAPPIER HOME.",
   featuresHeading: "A quick shop. A perfectly clear split.",
   pricingHeading: "Small price. One less thing to worry about.",
@@ -19,7 +19,7 @@ export const defaultSettings = {
   showPricing: true,
   privacyUrl: "",
   termsUrl: "",
-  seoTitle: "SplitWisee — Shared living. Clear spending.",
+  seoTitle: "CoinSplit — Shared living. Clear spending.",
   seoDescription: "Shared household expenses, receipt scanning and fair monthly settlements.",
 };
 export function cleanWebsite(input) {

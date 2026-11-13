@@ -1,14 +1,19 @@
+import logoUrl from "../assets/brand/coinsplit-logo-pdf.png?url";
 import regularFontUrl from "../assets/fonts/DejaVuSans.ttf?url";
 import boldFontUrl from "../assets/fonts/DejaVuSans-Bold.ttf?url";
 import { brand } from "../config/brand.js";
+import { formatLongDate } from "./format.js";
 
-// Branded A4 documents (receipts, statements). jsPDF and the DejaVu Sans fonts load on first use only.
+// Branded A4 documents (receipts, statements, closing sheets). Every page carries the logo, the document name,
+// household and date range in the header, and the export time, page number and a privacy line in the footer.
+// jsPDF, the DejaVu Sans fonts and the logo load on first use only.
 
 const PAGE = { width: 210, left: 18, right: 192, contentBottom: 258 };
 const COLORS = {
   text: [26, 47, 43],
   muted: [99, 118, 111],
-  brand: [8, 127, 104],
+  brand: [20, 125, 100],
+  logo: [18, 70, 44],
   brandSoft: [223, 247, 237],
   highlight: [232, 246, 237],
   tableHead: [241, 246, 243],
@@ -17,6 +22,8 @@ const COLORS = {
 };
 
 let fontsPromise;
+let logoPromise;
+const LOGO_RATIO = 1400 / 382; // width / height of coinsplit-logo-pdf.png
 
 function toBase64(buffer) {
   const bytes = new Uint8Array(buffer);
@@ -40,7 +47,25 @@ function loadFonts() {
   return fontsPromise;
 }
 
+function loadLogo() {
+  logoPromise ??= fetch(logoUrl)
+    .then((response) => {
+      if (!response.ok) throw new Error("Logo unavailable");
+      return response.arrayBuffer();
+    })
+    .then((buffer) => `data:image/png;base64,${toBase64(buffer)}`)
+    .catch((error) => {
+      logoPromise = undefined;
+      throw error;
+    });
+  return logoPromise;
+}
+
 export class PdfReport {
+  /**
+   * @param {object} options label (document name), household (name), range ([start, end] ISO dates or a text),
+   *   subtitle, generatedAt
+   */
   static async create(options) {
     const { jsPDF } = await import("jspdf");
     const doc = new jsPDF({ unit: "mm", format: "a4", compress: true });
@@ -55,19 +80,37 @@ export class PdfReport {
     } catch {
       // Built-in Helvetica covers £ and Latin text if the font files cannot be fetched (offline).
     }
-    return new PdfReport(doc, family, options);
+    let logo = null;
+    try {
+      logo = await loadLogo();
+    } catch {
+      // Offline: the header falls back to the brand name in text.
+    }
+    return new PdfReport(doc, family, { ...options, logo });
   }
 
   constructor(
     doc,
     family,
-    { label, subtitle = "SHARED SPENDING, CLEARLY RECORDED", generatedAt = new Date() },
+    {
+      label,
+      subtitle = brand.tagline.toUpperCase(),
+      household = "",
+      range = "",
+      generatedAt = new Date(),
+      logo = null,
+    },
   ) {
     this.doc = doc;
     this.family = family;
     this.label = label;
     this.subtitle = subtitle;
+    this.household = household;
+    this.range = Array.isArray(range)
+      ? `${formatLongDate(range[0])} – ${formatLongDate(range[1])}`
+      : String(range || "");
     this.generatedAt = generatedAt;
+    this.logo = logo;
     this.y = 0;
     this.header();
   }
@@ -80,17 +123,26 @@ export class PdfReport {
 
   header() {
     const { doc } = this;
-    doc.setFillColor(...COLORS.brand);
-    doc.rect(0, 0, PAGE.width, 34, "F");
-    this.font(23, true, COLORS.white);
-    doc.text(brand.name, PAGE.left, 19);
-    this.font(8, false, COLORS.brandSoft);
-    doc.text(this.subtitle, PAGE.left, 27);
-    this.font(9, true, COLORS.white);
-    doc.text(this.label, PAGE.right, 17, { align: "right" });
-    this.font(8, false, COLORS.brandSoft);
-    doc.text(`v${brand.version} · GBP`, PAGE.right, 25, { align: "right" });
-    this.y = 46;
+    if (this.logo) doc.addImage(this.logo, "PNG", PAGE.left, 10, 12 * LOGO_RATIO, 12, "logo", "FAST");
+    else {
+      this.font(20, true, COLORS.logo);
+      doc.text(brand.name, PAGE.left, 19);
+      this.font(7, false, COLORS.muted);
+      doc.text(this.subtitle, PAGE.left, 24);
+    }
+    this.font(9, true, COLORS.brand);
+    doc.text(this.label, PAGE.right, 13, { align: "right" });
+    if (this.household) {
+      this.font(9, true);
+      doc.text(doc.splitTextToSize(this.household, 90)[0], PAGE.right, 18.5, { align: "right" });
+    }
+    this.font(8, false, COLORS.muted);
+    doc.text(this.range || `GBP · v${brand.version}`, PAGE.right, 23.5, { align: "right" });
+    doc.setDrawColor(...COLORS.brand);
+    doc.setLineWidth(0.6);
+    doc.line(PAGE.left, 29, PAGE.right, 29);
+    doc.setLineWidth(0.2);
+    this.y = 40;
   }
 
   newPage() {
@@ -192,22 +244,28 @@ export class PdfReport {
     this.y += 4;
   }
 
-  /** Adds the footer note and page numbers to every page and returns the PDF as a Blob. */
+  /** Adds the notes, export time, privacy line and page numbers to every page and returns the PDF as a Blob. */
   finish(footerLines = []) {
     const { doc } = this;
     const pages = doc.getNumberOfPages();
+    const exported = this.generatedAt.toISOString().slice(0, 16).replace("T", " ");
     for (let page = 1; page <= pages; page++) {
       doc.setPage(page);
       this.font(7, false, COLORS.muted);
-      footerLines.slice(0, 2).forEach((line, i) => doc.text(line, PAGE.left, 269 + i * 5));
+      footerLines.slice(0, 2).forEach((line, i) => doc.text(line, PAGE.left, 266 + i * 4.5));
       doc.setDrawColor(...COLORS.rule);
-      doc.line(PAGE.left, 280, PAGE.right, 280);
+      doc.line(PAGE.left, 277, PAGE.right, 277);
+      this.font(7, true, COLORS.logo);
+      doc.text(`${brand.name}`, PAGE.left, 282);
+      this.font(7, false, COLORS.muted);
       doc.text(
-        `Generated ${this.generatedAt.toISOString().slice(0, 19).replace("T", " ")} UTC`,
-        PAGE.left,
-        287,
+        `· ${brand.tagline} · v${brand.version}`,
+        PAGE.left + doc.getTextWidth(`${brand.name} `) + 1,
+        282,
       );
-      doc.text(`Page ${page} of ${pages}`, PAGE.right, 287, { align: "right" });
+      doc.text(`Page ${page} of ${pages}`, PAGE.right, 282, { align: "right" });
+      doc.text("Private household record. Share only with the people it concerns.", PAGE.left, 287);
+      doc.text(`Exported ${exported} UTC`, PAGE.right, 287, { align: "right" });
     }
     return doc.output("blob");
   }

@@ -9,7 +9,8 @@ import { PdfReport } from "../../../src/utils/pdf.js";
 async function statementPdf(report, rows) {
   const pdf = await PdfReport.create({
     label: "MONTHLY PLATFORM STATEMENT",
-    subtitle: "PLATFORM ACCOUNTS · ACCOUNTANT REVIEW",
+    household: "Platform accounts · accountant review",
+    range: report.month,
   });
   pdf.heading(`Statement for ${report.month}`);
   pdf.muted("Monthly movements only: opening balances, tax and accruals are not included.", 9);
@@ -59,7 +60,7 @@ export function StatementPanel({ report }) {
     setBusy(true);
     setError("");
     try {
-      saveBlob(await statementPdf(report, rows), `SplitWisee-${report.month}-Monthly-Statement.pdf`);
+      saveBlob(await statementPdf(report, rows), `CoinSplit-${report.month}-Monthly-Statement.pdf`);
     } catch (failure) {
       setError(failure.message || "The statement PDF could not be created.");
     } finally {
@@ -70,7 +71,7 @@ export function StatementPanel({ report }) {
   function downloadCsv() {
     saveBlob(
       csvBlob([
-        ["SplitWisee debit / credit record", report.month, "GBP pence; no opening balances"],
+        ["CoinSplit debit / credit record", report.month, "GBP pence; no opening balances"],
         [
           "Date",
           "Reference",
@@ -92,7 +93,7 @@ export function StatementPanel({ report }) {
           row.runningMovementPence,
         ]),
       ]),
-      `SplitWisee-${report.month}-Debit-Credit.csv`,
+      `CoinSplit-${report.month}-Debit-Credit.csv`,
     );
   }
 
