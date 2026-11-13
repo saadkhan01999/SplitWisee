@@ -12,7 +12,8 @@ import { checkEnvironment, parseOrigins } from "./config/env.js";
  * A function has no long-lived process and a read-only disk, so unlike server.js:
  * - MongoDB and the app are set up on the first request and reused while the instance stays warm;
  * - receipts are kept in the instance's temporary folder (the only writable one), which is lost when it is recycled;
- * - APP_ORIGIN defaults to this deployment's address, and its other Vercel addresses are allowed too;
+ * - APP_ORIGIN defaults to this deployment's address; its other Vercel addresses, and any domain the request was
+ *   actually sent to (same-site), are allowed too;
  * - without SMTP, one-time codes are shown on screen (DEMO_SHOW_CODES, set it to false to turn this off);
  * - the background referral-credit retry does not run.
  */
@@ -56,6 +57,9 @@ async function start() {
         (origin) => origin !== env.APP_ORIGIN,
       ),
       receiptDir,
+      // The website and the API share one address on Vercel, under whichever domain the visitor opened (production
+      // domain, custom domain, deployment or branch URL), so requests from that same address are accepted too.
+      sameHostOrigin: true,
     });
   } catch (error) {
     await client.close();

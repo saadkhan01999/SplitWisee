@@ -35,13 +35,31 @@ export function noIndex(_req, res, next) {
   next();
 }
 
+// The HTTPS addresses a request was sent to, from the proxy's X-Forwarded-Host and the Host header.
+function requestOrigins(req) {
+  return [req.headers["x-forwarded-host"], req.headers.host]
+    .map((value) =>
+      String(value || "")
+        .split(",")[0]
+        .trim()
+        .toLowerCase(),
+    )
+    .filter(Boolean)
+    .map((host) => `https://${host}`);
+}
+
 // Every state-changing API request must come from an allowed origin (CSRF defence in depth).
-export function requireAllowedOrigin(origins) {
+// `sameHost` (Vercel, where the website and the API share one address) also accepts a request whose Origin is the
+// HTTPS address it was sent to: that is a same-site request, so it stays allowed whichever domain the visitor used.
+// Requests from any other website are still refused.
+export function requireAllowedOrigin(origins, { sameHost = false } = {}) {
   const allowed = new Set(origins);
   return (req, _res, next) => {
-    if (!["GET", "HEAD", "OPTIONS"].includes(req.method) && !allowed.has(req.headers.origin))
-      return next(fail("Origin not allowed.", 403));
-    next();
+    if (["GET", "HEAD", "OPTIONS"].includes(req.method)) return next();
+    const origin = String(req.headers.origin || "").toLowerCase();
+    if (allowed.has(req.headers.origin) || (sameHost && origin && requestOrigins(req).includes(origin)))
+      return next();
+    next(fail("Origin not allowed.", 403));
   };
 }
 
