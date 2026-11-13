@@ -8,6 +8,7 @@ import { twilioConfigured, twilioVerify } from "../providers/twilio.js";
 import { googleConfigured, googleClient } from "../providers/google.js";
 import { lockedError } from "../services/auth-throttle.js";
 import { version } from "../config/env.js";
+import { operatorSecret } from "../config/operator.js";
 const QUICK_MAX_ATTEMPTS = 4;
 const hash = (x) => crypto.createHash("sha256").update(x).digest("hex"),
   tok = () => crypto.randomBytes(32).toString("hex"),
@@ -695,12 +696,15 @@ function installPlatform(
     session,
     operator,
     endpoint(async (req, res) => {
-      let keys = {};
-      try {
-        keys = JSON.parse(process.env.OPERATOR_TOTP_SECRETS || "{}");
-      } catch {}
-      const secret = keys[req.user.id];
-      if (!secret) bad("Operator authenticator is not configured.", 503);
+      const secret = operatorSecret(req.user.id);
+      // A configuration problem only the owner can fix, so they get the real reason rather than a generic 503.
+      if (!secret)
+        throw Object.assign(
+          new Error(
+            "The operator authenticator key is not set or not readable on the server. Set OPERATOR_TOTP_SECRETS to your authenticator key and redeploy.",
+          ),
+          { status: 503, expose: true },
+        );
       const code = String(req.body.code || "");
       if (!/^\d{6}$/.test(code)) bad("Invalid authenticator code.");
       const timestamp = Date.now();

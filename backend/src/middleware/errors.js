@@ -7,7 +7,8 @@ export function apiNotFound(_req, res) {
 
 // Client-facing messages come only from errors the code raised deliberately: an explicit `status`, or a plain `Error`
 // thrown by domain validation (calculation engine, households, settings, accounting, profile). Anything else
-// (TypeError, MongoDB, file-system, provider SDK) is an internal failure: 500 with a generic message.
+// (TypeError, MongoDB, file-system, provider SDK) is an internal failure: 500 with a generic message. A 5xx error
+// keeps its message only when the code set `expose: true` on it.
 export function classifyError(err) {
   if (err?.type === "entity.parse.failed")
     return { status: 400, message: "Request body must be valid JSON." };
@@ -21,7 +22,9 @@ export function classifyError(err) {
   if (!status) status = err?.constructor === Error && !err.code ? 400 : 500;
   return {
     status,
-    message: status >= 500 ? "Service temporarily unavailable. Please try again." : err.message,
+    // `expose` marks a server-side message written for the user (for example a missing setting only they can fix).
+    message:
+      status >= 500 && !err.expose ? "Service temporarily unavailable. Please try again." : err.message,
   };
 }
 

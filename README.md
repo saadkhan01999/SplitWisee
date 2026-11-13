@@ -75,7 +75,8 @@ rename to **CoinSplit** with the new logo.
 **Superadmin access:** sign in, copy your account ID from Account & settings, run
 `npm run operator:secret -- <account id>` in `backend/`, set the printed `SUPERADMIN_USER_ID` and
 `OPERATOR_TOTP_SECRETS` on the API host (Vercel: project environment variables) and redeploy, then open `/admin/`
-and enter the code from your authenticator app.
+and enter the code from your authenticator app. `OPERATOR_TOTP_SECRETS` can be the printed JSON or just the
+key itself; if the key cannot be read, the unlock screen says so instead of showing a generic error.
 
 ## Quick start
 
