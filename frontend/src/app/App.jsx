@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Button } from "../components/Button.jsx";
 import { StatusScreen } from "../components/StatusScreen.jsx";
@@ -7,10 +7,14 @@ import { AuthPage } from "../features/auth/AuthPage.jsx";
 import { selectHousehold } from "../features/household/householdSlice.js";
 import { AppShell } from "../features/layout/AppShell.jsx";
 import { selectSession } from "../features/session/sessionSlice.js";
-import { LandingPage } from "../features/website/LandingPage.jsx";
 import { enterAccount, resumeSession } from "./bootstrap.js";
 import { navigated, parseHash, selectRoute } from "./navigationSlice.js";
 import { useDocumentPreferences } from "./useDocumentPreferences.js";
+
+// The public website (and its animation library) loads as its own chunk; signed-in members never download it.
+const LandingPage = lazy(() =>
+  import("../features/website/LandingPage.jsx").then((module) => ({ default: module.LandingPage })),
+);
 
 /** Back/Forward buttons and manual hash edits update the route in the store. */
 function useHistoryNavigation() {
@@ -54,7 +58,12 @@ function Routes() {
   const route = useSelector(selectRoute);
   const session = useSelector(selectSession);
 
-  if (route.page === "website") return <LandingPage />;
+  if (route.page === "website")
+    return (
+      <Suspense fallback={<StatusScreen message="Loading CoinSplit…" />}>
+        <LandingPage />
+      </Suspense>
+    );
   if (session.status === "checking") return <StatusScreen message="Checking your session…" />;
   if (session.status === "unavailable")
     return (

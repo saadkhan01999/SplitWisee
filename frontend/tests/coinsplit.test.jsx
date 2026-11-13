@@ -445,3 +445,36 @@ describe("superadmin statistics", () => {
     await waitFor(() => expect(api.called("GET", "/operator/stats")).toHaveLength(3));
   });
 });
+
+describe("website navigation and favicon", () => {
+  it("scrolls smoothly to sections, offers a full footer and shows active-section links", async () => {
+    mockApi({
+      "GET /public/settings": () => ({}),
+      "GET /public/promotion": () => ({ active: false }),
+      "GET /public/charity": () => ({ published: false }),
+    });
+    const { user: person } = renderWithStore(<LandingPage />);
+    const header = document.querySelector(".site-header");
+    expect(header).toBeInTheDocument();
+    const nav = within(header.querySelector(".desktop-menu"));
+    await person.click(nav.getByRole("link", { name: "Pricing" }));
+    expect(window.scrollTo).toHaveBeenCalledWith(expect.objectContaining({ behavior: "smooth" }));
+    expect(window.location.hash).toBe("#pricing");
+    const footer = screen.getByRole("contentinfo");
+    expect(within(footer).getByRole("navigation", { name: "Product" })).toHaveTextContent("How it works");
+    expect(footer).toHaveTextContent(`© ${new Date().getFullYear()} CoinSplit`);
+    expect(document.querySelector(".scroll-progress")).toBeInTheDocument();
+  });
+
+  it("links the new favicon set from the website and the control centre", async () => {
+    const fs = await import("node:fs");
+    for (const page of ["index.html", "admin/index.html"]) {
+      const html = fs.readFileSync(page, "utf8"); // vitest runs from the frontend folder
+      expect(html).toContain('href="/favicon.ico"');
+      expect(html).toContain('href="/favicon.svg"');
+    }
+    const svg = fs.readFileSync("public/favicon.svg", "utf8");
+    expect(svg).toContain("prefers-color-scheme:dark");
+    expect(fs.statSync("public/favicon.ico").size).toBeGreaterThan(1000);
+  });
+});
