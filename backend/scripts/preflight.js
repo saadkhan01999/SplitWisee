@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { backendRoot, frontendRoot, parseOrigins, version } from "../src/config/env.js";
-import { operatorSecret } from "../src/config/operator.js";
+import { operatorSecret, operatorSecretSetting } from "../src/config/operator.js";
 
 function isHttpsOrigin(value) {
   try {
@@ -68,7 +68,7 @@ export function preflight({ env = process.env, nodeVersion = process.versions.no
     Boolean(owner) && !owner.includes(","),
     "Set exactly one verified application user ID.",
   );
-  const totp = Boolean(owner) && Boolean(operatorSecret(owner, env.OPERATOR_TOTP_SECRETS));
+  const totp = Boolean(owner) && Boolean(operatorSecret(owner, operatorSecretSetting(env)));
   add("owner-totp", totp, "Configure a Base32 TOTP secret for that owner.");
 
   let receipts = false;
