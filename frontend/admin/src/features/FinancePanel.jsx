@@ -193,7 +193,7 @@ export function FinancePanel({ accounting }) {
 
   function downloadPack(format) {
     const sheets = accountSheets(report);
-    const prefix = `CoinSplit-${month}`;
+    const prefix = `KoinSplit-${month}`;
     if (format === "xlsx") saveBlob(workbook(sheets), `${prefix}-Accountant-Pack.xlsx`);
     else
       saveBlob(

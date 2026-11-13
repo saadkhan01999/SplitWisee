@@ -65,7 +65,7 @@ test("profile, export, access, rewards and support: own data only, no mass assig
     pricePence: 99,
   });
   r = await c.get("/api/v1/account/rewards");
-  assert.match(r.data.code, /^CS-[0-9A-F]{12}$/);
+  assert.match(r.data.code, /^KS-[0-9A-F]{12}$/);
   assert.equal(r.data.url, "https://splitwisee.test/?ref=" + r.data.code);
   assert.equal(r.data.freeMonths, 0);
   assert.equal((await c.post("/api/v1/account/support", { subject: "", message: "x" })).status, 400);

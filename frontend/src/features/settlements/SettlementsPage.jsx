@@ -194,7 +194,7 @@ export function SettlementsPage() {
         <Icon name="shield" />
         <span>
           Transfers happen in your own banking app. “Sent” is the payer’s declaration; only the recipient can
-          confirm receipt. Locked closing records stay unchanged. CoinSplit never moves money.
+          confirm receipt. Locked closing records stay unchanged. KoinSplit never moves money.
         </span>
       </div>
       <PeriodOverview />

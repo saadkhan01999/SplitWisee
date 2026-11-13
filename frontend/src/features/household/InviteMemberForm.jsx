@@ -42,7 +42,7 @@ export function InviteMemberForm({ room }) {
 
   async function share() {
     try {
-      if (navigator.share) await navigator.share({ title: `Join ${household.name} on CoinSplit`, url: link });
+      if (navigator.share) await navigator.share({ title: `Join ${household.name} on KoinSplit`, url: link });
       else await copy();
     } catch (failure) {
       if (failure?.name !== "AbortError")
@@ -88,7 +88,7 @@ export function InviteMemberForm({ room }) {
             value={link}
             onFocus={(event) => event.target.select()}
           />
-          <p>Valid for 7 days. CoinSplit does not send it for you: share it by message or email.</p>
+          <p>Valid for 7 days. KoinSplit does not send it for you: share it by message or email.</p>
           <div className="actions wrap">
             <Button variant="outline" icon="copy" onClick={copy}>
               Copy link

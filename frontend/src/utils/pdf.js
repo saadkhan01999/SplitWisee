@@ -1,4 +1,4 @@
-import logoUrl from "../assets/brand/coinsplit-logo-pdf.png?url";
+import logoUrl from "../assets/brand/koinsplit-logo-pdf.png?url";
 import regularFontUrl from "../assets/fonts/DejaVuSans.ttf?url";
 import boldFontUrl from "../assets/fonts/DejaVuSans-Bold.ttf?url";
 import { brand } from "../config/brand.js";
@@ -23,7 +23,7 @@ const COLORS = {
 
 let fontsPromise;
 let logoPromise;
-const LOGO_RATIO = 1400 / 382; // width / height of coinsplit-logo-pdf.png
+const LOGO_RATIO = 1400 / 372; // width / height of koinsplit-logo-pdf.png
 
 function toBase64(buffer) {
   const bytes = new Uint8Array(buffer);

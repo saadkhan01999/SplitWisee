@@ -1,7 +1,7 @@
 /* global __APP_VERSION__ */
 
 export const brand = Object.freeze({
-  name: "CoinSplit",
+  name: "KoinSplit",
   // Injected from package.json by vite.config.js.
   version: typeof __APP_VERSION__ === "string" ? __APP_VERSION__ : "dev",
   tagline: "Share expenses. Settle easily.",

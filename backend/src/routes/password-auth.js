@@ -55,7 +55,7 @@ export function installPasswordAuth(
         try {
           await users.insertOne({
             id,
-            referralCode: "CS-" + crypto.randomBytes(6).toString("hex").toUpperCase(),
+            referralCode: "KS-" + crypto.randomBytes(6).toString("hex").toUpperCase(),
             email: e,
             name,
             passwordHash,

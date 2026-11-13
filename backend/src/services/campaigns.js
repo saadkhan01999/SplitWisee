@@ -17,7 +17,7 @@ export const PROMOTION_DEFAULTS = Object.freeze({
   enabled: true,
   title: "Christmas offer",
   banner:
-    "Christmas offer: your first month of CoinSplit is free (100% off). Claim it from 1 to 31 December 2026.",
+    "Christmas offer: your first month of KoinSplit is free (100% off). Claim it from 1 to 31 December 2026.",
   details:
     "One free month (£0) per account for anyone without a subscription. Claim between 1 and 31 December 2026, up to 1,000 claims. It cannot be combined with a referral or welcome month that is already running.",
   announceFrom: "2026-11-01",
@@ -93,7 +93,7 @@ export const CHARITY_ID = "charity";
 export const CHARITY_DEFAULTS = Object.freeze({
   published: false,
   percent: 25,
-  basis: "net profit from CoinSplit subscriptions",
+  basis: "net profit from KoinSplit subscriptions",
   period: "each calendar year (1 January to 31 December)",
   beneficiary: "",
   conditions:

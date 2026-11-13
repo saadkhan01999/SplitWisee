@@ -19,7 +19,7 @@ export const defaultSettings = {
   showPricing: true,
   privacyUrl: "",
   termsUrl: "",
-  seoTitle: "CoinSplit — Shared living. Clear spending.",
+  seoTitle: "KoinSplit — Shared living. Clear spending.",
   seoDescription: "Shared household expenses, receipt scanning and fair monthly settlements.",
 };
 export function cleanWebsite(input) {

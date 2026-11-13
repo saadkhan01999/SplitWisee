@@ -1,4 +1,4 @@
-# CoinSplit v1.4.1
+# KoinSplit v1.4.2
 
 Shared household expenses for flats, houses, families and hostels: receipt scanning, exact-pence splits, monthly
 closings, member-to-member repayment tracking, bookkeeping, referrals and a £0.99/month subscription, plus a separate
@@ -12,6 +12,19 @@ The project is two independent packages:
 | [`frontend/`](frontend) | React 19, Redux Toolkit, Vite 8, Tesseract.js + PDF.js (in-browser OCR), jsPDF | `npm run dev` → <http://localhost:5173> | static files from `npm run build` |
 
 There is no demo mode, seed data or sample household: every record comes from real sign-ups through the API.
+
+## KoinSplit brand (v1.4.2)
+
+- The product is now **KoinSplit** everywhere: website, app, control centre, emails, PDF/CSV/JSON downloads, the
+  installed-app name and page titles.
+- The logo is the supplied **KS** monogram, kept exactly as drawn (vector trace of the artwork, not redrawn), with
+  the Montserrat Bold "KoinSplit" wordmark and the "Share expenses. Settle easily" tagline. All versions are
+  transparent vectors in `frontend/public/brand/koinsplit-*.svg` (horizontal, compact, stacked, mark only; green,
+  light and white). The app draws the logo inline from `src/components/logoPaths.js`, so it stays sharp at every size.
+- Favicons and app icons were regenerated from the KS mark: `favicon.svg` (light on dark tabs), `favicon.ico`
+  (16/32/48 px), `icon.svg`, `icon-192.png`, `icon-512.png`, `icon-maskable-512.png` and `apple-touch-icon.png`.
+- Downloads use the new schema names `koinsplit-closing-sheet-v1` and `koinsplit-household-statement-v1`.
+- New referral codes start with `KS-`; existing `CS-` and `SW-` codes keep working.
 
 ## Website polish (v1.4.1)
 
@@ -30,27 +43,27 @@ There is no demo mode, seed data or sample household: every record comes from re
 ## Update Round 02 (v1.4.0)
 
 The twelve handwritten updates from the *Coin Split Update Round 02* developer handover (11 November 2026), plus the
-rename to **CoinSplit** with the new logo.
+rename to **KoinSplit** with the new logo.
 
 | # | Request | What was built | Where | Tests |
 |---|---|---|---|---|
-| 01 | Add new room | Prominent **Add new room** for the owner (and admins, as before); unique trimmed names; reachable on phones | Household | `coinsplit.test.jsx`, `e2e-households` |
-| 02 | Superadmin statistics | **Statistics**: active users/households, pending payments, coupon/referral/offer claims, invitations, payments, monthly trends; date filter, Refresh, timestamps; aggregates only | `/admin/` › Statistics | `v14-coinsplit` (stats), `coinsplit.test.jsx` |
-| 03 | Next settlement period | Closing locks the period and opens exactly one next period (next calendar month, February/leap aware); confirm or change name/dates; idempotent; no overlap | Settlements › Start new settlement | `v14-coinsplit` (periods) |
-| 04 | Previous closing sheets | **Settlement history** (newest first, status/year filters) and frozen **closing sheets** with PDF/CSV/JSON | Reports, Settlements | `v14-coinsplit`, `coinsplit.test.jsx` |
-| 05 | Receipts kept one more month | Original files kept until **one month after the period locks**; date shown on receipts and sheets; removal only after the owner approves the policy; legal hold; record kept; 410 after removal | Receipt details, `/admin/` › Receipts | `v14-coinsplit` (retention) |
-| 06 | Christmas 100% off | Website ribbon from 1 Nov; **1 free month (£0)** claimable 1–31 Dec 2026; max 1,000; one per account; not stacked with a running free month; owner can edit/switch off | Website header, pricing, Invite & earn, `/admin/` › Campaigns | `v14-coinsplit` (promotion) |
-| 07 | Professional downloads | PDFs with logo, document name, household, date range, export time, page numbers, privacy footer; JSON alongside PDF/CSV; descriptive file names | Reports, Settlements, receipts, bookkeeping, admin | `coinsplit.test.jsx` |
-| 08 | Audit invitation & referral links | Single-use, recipient-bound, 7-day links with specific recovery messages; atomic join; invitation vs referral labelled; invitation audit trail | Invite member, sign-up, `/admin/` › Referrals | `v14-coinsplit` (invitations) |
-| 09 | 25% to charity | “25% of our net profit from CoinSplit subscriptions”, versioned; **publishes only once a charity is named**; pledge calculator from the accounts | Website › Giving back, `/admin/` › Campaigns | `v14-coinsplit` (charity) |
-| 10 | Household on mobile | Phone bar: Home, Expenses, Add, Settle, **Household**, **More** (every section); checked at 320/375/430 px, light and dark | Mobile | `coinsplit.test.jsx`, browser run |
+| 01 | Add new room | Prominent **Add new room** for the owner (and admins, as before); unique trimmed names; reachable on phones | Household | `koinsplit.test.jsx`, `e2e-households` |
+| 02 | Superadmin statistics | **Statistics**: active users/households, pending payments, coupon/referral/offer claims, invitations, payments, monthly trends; date filter, Refresh, timestamps; aggregates only | `/admin/` › Statistics | `v14-koinsplit` (stats), `koinsplit.test.jsx` |
+| 03 | Next settlement period | Closing locks the period and opens exactly one next period (next calendar month, February/leap aware); confirm or change name/dates; idempotent; no overlap | Settlements › Start new settlement | `v14-koinsplit` (periods) |
+| 04 | Previous closing sheets | **Settlement history** (newest first, status/year filters) and frozen **closing sheets** with PDF/CSV/JSON | Reports, Settlements | `v14-koinsplit`, `koinsplit.test.jsx` |
+| 05 | Receipts kept one more month | Original files kept until **one month after the period locks**; date shown on receipts and sheets; removal only after the owner approves the policy; legal hold; record kept; 410 after removal | Receipt details, `/admin/` › Receipts | `v14-koinsplit` (retention) |
+| 06 | Christmas 100% off | Website ribbon from 1 Nov; **1 free month (£0)** claimable 1–31 Dec 2026; max 1,000; one per account; not stacked with a running free month; owner can edit/switch off | Website header, pricing, Invite & earn, `/admin/` › Campaigns | `v14-koinsplit` (promotion) |
+| 07 | Professional downloads | PDFs with logo, document name, household, date range, export time, page numbers, privacy footer; JSON alongside PDF/CSV; descriptive file names | Reports, Settlements, receipts, bookkeeping, admin | `koinsplit.test.jsx` |
+| 08 | Audit invitation & referral links | Single-use, recipient-bound, 7-day links with specific recovery messages; atomic join; invitation vs referral labelled; invitation audit trail | Invite member, sign-up, `/admin/` › Referrals | `v14-koinsplit` (invitations) |
+| 09 | 25% to charity | “25% of our net profit from KoinSplit subscriptions”, versioned; **publishes only once a charity is named**; pledge calculator from the accounts | Website › Giving back, `/admin/` › Campaigns | `v14-koinsplit` (charity) |
+| 10 | Household on mobile | Phone bar: Home, Expenses, Add, Settle, **Household**, **More** (every section); checked at 320/375/430 px, light and dark | Mobile | `koinsplit.test.jsx`, browser run |
 | 11 | Page micro-animations | 200 ms section/dialog entrance, 140 ms dialog exit; transform/opacity only; off with reduced motion | Everywhere | browser run |
-| 12 | Settlement page actions | On Settlements the top shows only **Start new settlement** (owner/admin); members see none; other tabs keep Add expense / Invite member | Settlements | `coinsplit.test.jsx` |
+| 12 | Settlement page actions | On Settlements the top shows only **Start new settlement** (owner/admin); members see none; other tabs keep Add expense / Invite member | Settlements | `koinsplit.test.jsx` |
 
 **Decisions taken** (from the handover’s “decisions to confirm”, answered by the product owner where marked):
 
-- Brand (DEC-01, owner): **CoinSplit**; the supplied KS artwork redrawn with a C as a transparent vector logo
-  (`frontend/public/brand/`). Internal identifiers stay unchanged: database name, cookies, stored preferences and the
+- Brand (DEC-01, owner): **KoinSplit** with the supplied KS artwork as a transparent vector logo
+  (`frontend/public/brand/`; from v1.4.2). Internal identifiers stay unchanged: database name, cookies, stored preferences and the
   `splitwisee-*-v1` export schemas of earlier versions.
 - Receipts (DEC-02): the extra month counts from the date the period is locked. Nothing is ever deleted until the owner
   approves the policy in the control centre; households on legal hold are skipped.
@@ -68,7 +81,7 @@ rename to **CoinSplit** with the new logo.
   and expense rows) and `retentionUntil`. Older closings keep working; their sheets are read from the locked expenses.
 - New collections `promotionRedemptions` and `invitationEvents` (validators and indexes are created on start-up).
 - New actions `periodCreate` and `periodUpdate`; new routes are listed in the API table below.
-- New referral codes start with `CS-`; existing `SW-` codes keep working.
+- New referral codes start with `KS-`; existing `CS-` and `SW-` codes keep working.
 - Rollback: deploy v1.3.0 again. The extra fields and collections are ignored by v1.3.0; any receipt files removed
   under an approved retention policy stay removed.
 

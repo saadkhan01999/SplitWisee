@@ -15,7 +15,7 @@ import {
 import { promotionState, PROMOTION_DEFAULTS } from "../src/services/campaigns.js";
 import { purgeExpiredReceipts } from "../src/services/retention.js";
 
-// CoinSplit Update Round 02 (v1.4.0): settlement periods, closing history, receipt retention, campaigns,
+// KoinSplit Update Round 02 (v1.4.0): settlement periods, closing history, receipt retention, campaigns,
 // platform statistics and the invitation/referral audit, driven through the real HTTP API.
 
 const SECRET = "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ";
@@ -291,7 +291,7 @@ test("charity: no unnamed claim, versioned wording, public statement only once p
   assert.deepEqual((await visitor.get("/api/v1/public/charity")).data, { published: false });
   const base = {
     percent: 25,
-    basis: "net profit from CoinSplit subscriptions",
+    basis: "net profit from KoinSplit subscriptions",
     period: "each calendar year (1 January to 31 December)",
     beneficiary: "",
     conditions: "Before tax, after refunds, payment fees and operating costs.",
@@ -317,7 +317,7 @@ test("charity: no unnamed claim, versioned wording, public statement only once p
   assert.equal(r.data.published, true);
   assert.equal(
     r.data.statement,
-    "25% of our net profit from CoinSplit subscriptions goes to Example Foundation, each calendar year (1 January to 31 December).",
+    "25% of our net profit from KoinSplit subscriptions goes to Example Foundation, each calendar year (1 January to 31 December).",
   );
   assert.equal(r.data.version, 2);
 });
@@ -426,5 +426,5 @@ test("invitation and referral links: single use, expiry, recipient binding, reco
       [N.id, "invitation"],
     ].sort(),
   );
-  assert.equal((await b.get("/api/v1/account/rewards")).data.code.startsWith("CS-"), true);
+  assert.equal((await b.get("/api/v1/account/rewards")).data.code.startsWith("KS-"), true);
 });

@@ -1,7 +1,7 @@
 import { brand } from "../config/brand.js";
 import { MARK_PATH, MARK_VIEWBOX, WORDMARK_PATH, WORDMARK_VIEWBOX } from "./logoPaths.js";
 
-// The CoinSplit logo as inline vectors: transparent, sharp at every size and coloured by CSS (`--logo`), so it suits
+// The KoinSplit logo as inline vectors: transparent, sharp at every size and coloured by CSS (`--logo`), so it suits
 // light and dark themes. The same artwork is published as files in public/brand/.
 
 export function BrandMark({ className = "brand-symbol" }) {

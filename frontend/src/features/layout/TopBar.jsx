@@ -37,7 +37,7 @@ export function TopBar() {
       const blob = await captureElement(document.getElementById("capture"), {
         background: theme === "dark" ? "#14221e" : "#f7faf8",
       });
-      await shareBlob(blob, "CoinSplit-snapshot.png", "Household overview");
+      await shareBlob(blob, "KoinSplit-snapshot.png", "Household overview");
     } catch (error) {
       if (error?.name !== "AbortError")
         dispatch(toastShown("Screenshot unavailable here. Use your device’s screenshot buttons instead."));

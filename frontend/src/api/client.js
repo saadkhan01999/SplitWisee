@@ -1,4 +1,4 @@
-// Thin client for the CoinSplit REST API. Sessions use an HttpOnly cookie; every write also sends the CSRF
+// Thin client for the KoinSplit REST API. Sessions use an HttpOnly cookie; every write also sends the CSRF
 // token the API returns from /me and sign-in responses.
 
 const API_BASE = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/+$/, "");
@@ -50,7 +50,7 @@ async function request(path, { method, body, signal, timeout = TIMEOUT_MS } = {}
     if (signal?.aborted) throw error;
     if (controller.signal.aborted)
       throw new ApiError("The service took too long to respond. Check your connection and try again.", 0);
-    throw new ApiError("Cannot reach CoinSplit. Check your connection and try again.", 0);
+    throw new ApiError("Cannot reach KoinSplit. Check your connection and try again.", 0);
   } finally {
     clearTimeout(timer);
   }
@@ -60,7 +60,7 @@ async function request(path, { method, body, signal, timeout = TIMEOUT_MS } = {}
     data = await response.json();
   } catch {
     throw new ApiError(
-      "The CoinSplit service returned an unexpected response. Please try again.",
+      "The KoinSplit service returned an unexpected response. Please try again.",
       response.status,
     );
   }

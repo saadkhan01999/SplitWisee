@@ -66,7 +66,7 @@ async function checkLanguageFile() {
     const response = await fetch(`${ocrBase()}${LANGUAGE_FILE}`, { cache: "no-store" });
     const bytes = new Uint8Array(await response.arrayBuffer());
     const contentType = response.headers.get("content-type") ?? "";
-    console.error("[CoinSplit receipt scanner] language file check:", {
+    console.error("[KoinSplit receipt scanner] language file check:", {
       status: response.status,
       contentType,
       bytes: bytes.length,
@@ -80,7 +80,7 @@ async function checkLanguageFile() {
 /** Plain-language reason for an engine failure (the technical detail is logged to the console). */
 async function engineFailure(reason) {
   const detail = String(reason?.message ?? reason ?? "unknown error");
-  console.error("[CoinSplit receipt scanner]", reason);
+  console.error("[KoinSplit receipt scanner]", reason);
   if (/fetch|network|response code|404|load failed/i.test(detail))
     return new ScanStopped(
       `The receipt scanner files could not be downloaded (${detail}). Check your connection and try again.`,
@@ -194,7 +194,7 @@ export async function scanReceipt(file, { onProgress = () => {}, signal } = {}) 
       } catch (failure) {
         if (cancelled) throw failure;
         if (safeMode) throw await untilStopped(engineFailure(failure));
-        console.warn("[CoinSplit receipt scanner] retrying in safe mode:", failure);
+        console.warn("[KoinSplit receipt scanner] retrying in safe mode:", failure);
       }
     }
     return worker;

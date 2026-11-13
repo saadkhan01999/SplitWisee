@@ -35,7 +35,7 @@ export function safeFilename(value, fallback = "file") {
 }
 
 /**
- * Descriptive export file names: "CoinSplit-Willow-House-Closing-sheet-2026-10-01-to-2026-10-31.pdf".
+ * Descriptive export file names: "KoinSplit-Willow-House-Closing-sheet-2026-10-01-to-2026-10-31.pdf".
  * Parts are kept to letters, digits and hyphens so every file system and mail client accepts them.
  */
 export function exportFilename({ household, document, start, end, ext }) {

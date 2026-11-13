@@ -1,7 +1,7 @@
 {
   "name": "splitwisee-backend",
-  "version": "1.4.1",
-  "description": "CoinSplit REST API (Express 5 + MongoDB).",
+  "version": "1.4.2",
+  "description": "KoinSplit REST API (Express 5 + MongoDB).",
   "private": true,
   "type": "module",
   "main": "src/server.js",

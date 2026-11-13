@@ -186,7 +186,7 @@ export function AdminDashboard() {
               <h1>{section === "Overview" ? "Dashboard" : section}</h1>
               <p>
                 {section === "Overview"
-                  ? "What’s happening across CoinSplit."
+                  ? "What’s happening across KoinSplit."
                   : section === "Statistics"
                     ? "Live aggregate statistics. No household’s personal records are shown."
                     : "Every change is permission-checked and recorded in the audit log."}

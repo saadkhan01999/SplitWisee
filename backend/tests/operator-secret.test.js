@@ -24,7 +24,7 @@ test("operatorSecret reads the documented JSON map and common copy-paste variant
     JSON.stringify({ [ID]: `${KEY}====` }),
     `OPERATOR_TOTP_SECRETS=${json}`, // the whole .env line pasted as the value
     `OPERATOR_TOTP_SECRETS=${KEY}`,
-    `otpauth://totp/CoinSplit%3Aowner?secret=${KEY}&issuer=CoinSplit&algorithm=SHA1&digits=6&period=30`,
+    `otpauth://totp/KoinSplit%3Aowner?secret=${KEY}&issuer=KoinSplit&algorithm=SHA1&digits=6&period=30`,
   ];
   for (const raw of accepted) assert.equal(operatorSecret(ID, raw), KEY, raw);
   // With several entries the owner's own entry is required.

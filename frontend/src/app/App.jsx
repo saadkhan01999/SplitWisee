@@ -60,7 +60,7 @@ function Routes() {
 
   if (route.page === "website")
     return (
-      <Suspense fallback={<StatusScreen message="Loading CoinSplit…" />}>
+      <Suspense fallback={<StatusScreen message="Loading KoinSplit…" />}>
         <LandingPage />
       </Suspense>
     );
@@ -68,7 +68,7 @@ function Routes() {
   if (session.status === "unavailable")
     return (
       <StatusScreen
-        title="CoinSplit is unreachable"
+        title="KoinSplit is unreachable"
         message={session.error || "The service did not respond. Check your connection and try again."}
         action={<Button onClick={() => dispatch(resumeSession())}>Try again</Button>}
       />
