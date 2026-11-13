@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { operatorSecret } from "../src/config/operator.js";
+import { operatorSecret, operatorSecretProblem, operatorSecretSetting } from "../src/config/operator.js";
 import { classifyError } from "../src/middleware/errors.js";
 import { boot, account } from "./helpers/http.js";
 import { totp } from "../src/routes/platform.js";
@@ -22,6 +22,9 @@ test("operatorSecret reads the documented JSON map and common copy-paste variant
     JSON.stringify(json), // the JSON wrapped in extra quotes
     JSON.stringify({ "00000000-0000-4000-8000-000000000002": KEY }), // single entry with a mistyped id
     JSON.stringify({ [ID]: `${KEY}====` }),
+    `OPERATOR_TOTP_SECRETS=${json}`, // the whole .env line pasted as the value
+    `OPERATOR_TOTP_SECRETS=${KEY}`,
+    `otpauth://totp/CoinSplit%3Aowner?secret=${KEY}&issuer=CoinSplit&algorithm=SHA1&digits=6&period=30`,
   ];
   for (const raw of accepted) assert.equal(operatorSecret(ID, raw), KEY, raw);
   // With several entries the owner's own entry is required.
@@ -38,6 +41,15 @@ test("operatorSecret reads the documented JSON map and common copy-paste variant
     "[1,2]",
   ])
     assert.equal(operatorSecret(ID, raw), "", String(raw));
+});
+
+test("the setting name and the problem message", () => {
+  assert.equal(operatorSecretSetting({ OPERATOR_TOTP_SECRETS: ` ${KEY} ` }), KEY);
+  assert.equal(operatorSecretSetting({ OPERATOR_TOTP_SECRET: KEY }), KEY);
+  assert.equal(operatorSecretSetting({}), "");
+  assert.match(operatorSecretProblem(""), /is not set on this deployment/);
+  assert.match(operatorSecretProblem("garbage"), /not a valid authenticator key/);
+  assert.doesNotMatch(operatorSecretProblem("garbage"), /garbage/);
 });
 
 test("a 5xx error keeps its message only when it is marked expose", () => {
@@ -80,6 +92,14 @@ test("a missing key tells the owner what to set instead of a generic error", asy
   const { owner } = await ownerWith(t, undefined);
   const res = await owner.post("/api/v1/operator/unlock", { code: "123456" });
   assert.equal(res.status, 503);
-  assert.match(res.data.error, /OPERATOR_TOTP_SECRETS/);
+  assert.match(res.data.error, /OPERATOR_TOTP_SECRETS is not set on this deployment/);
   assert.doesNotMatch(res.data.error, /temporarily unavailable/);
+});
+
+test("an unreadable key says it is set but invalid, without echoing it", async (t) => {
+  const { owner } = await ownerWith(t, "my-secret-value-01");
+  const res = await owner.post("/api/v1/operator/unlock", { code: "123456" });
+  assert.equal(res.status, 503);
+  assert.match(res.data.error, /not a valid authenticator key/);
+  assert.doesNotMatch(res.data.error, /my-secret-value/);
 });
